@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Προσομοίωση Μετασχηματιστή Υποβιβασμού Τάσης</title>
+  <style>
+    :root {
+      --bg: #fff8d8;
+      --panel: #ffffff;
+      --ink: #111827;
+      --muted: #4b5563;
+      --wire: #111827;
+      --accent: #16a34a;
+      --danger: #dc2626;
+      --primary: #2563eb;
+      --secondary: #dc2626;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: 0.2px;
+    }
+
+    .author {
+      margin-top: 3px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 285px;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .sim-card { padding: 9px; }
+    .controls { padding: 9px; }
+
+    .controls h2 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+
+    .control { margin-bottom: 7px; }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    label span:last-child {
+      color: #1f2937;
+      font-weight: 800;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #60a5fa;
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f3f4f6;
+      padding: 6px 8px;
+      border-radius: 12px;
+      margin: 6px 0 8px;
+      font-size: 13px;
+    }
+
+    .toggle {
+      border: none;
+      border-radius: 999px;
+      padding: 7px 12px;
+      color: white;
+      background: var(--danger);
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .toggle.on { background: var(--accent); }
+
+    .meters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .meter {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 5px;
+      text-align: center;
+    }
+
+    .meter .name {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .meter .value {
+      font-size: 14px;
+      margin-top: 2px;
+      font-weight: 900;
+    }
+
+    .note {
+      margin-top: 6px;
+      padding: 7px;
+      border-radius: 10px;
+      background: #ecfeff;
+      border: 1px solid #bae6fd;
+      font-size: 11px;
+      line-height: 1.25;
+      color: #164e63;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 14px;
+      background: #fffdf0;
+    }
+
+    .label-text {
+      font-size: 15px;
+      font-weight: 800;
+      fill: #111827;
+    }
+
+    .message-text {
+      font-size: 13px;
+      font-weight: 800;
+      fill: #111827;
+    }
+
+    .small-text {
+      font-size: 12px;
+      font-weight: 700;
+      fill: #374151;
+    }
+
+    .tiny-text {
+      font-size: 11px;
+      font-weight: 700;
+      fill: #4b5563;
+    }
+
+    .wire {
+      stroke: var(--wire);
+      stroke-width: 4;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .wire-off {
+      stroke: #9ca3af;
+      opacity: 0.65;
+    }
+
+    .flux {
+      stroke-width: 5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-dasharray: 12 10;
+      opacity: 0;
+    }
+
+    .flux-forward {
+      stroke: #22c55e;
+      animation: flowForward 2s linear infinite, fadeForward 2s ease-in-out infinite;
+    }
+
+    .flux-reverse {
+      stroke: #14b8a6;
+      animation: flowReverse 2s linear infinite, fadeReverse 2s ease-in-out infinite;
+    }
+
+    .current {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 10 9;
+      stroke-width: 5;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .i1-forward {
+      stroke: #2563eb;
+      animation: flowForward 1.6s linear infinite, fadeForward 1.6s ease-in-out infinite;
+    }
+
+    .i1-reverse {
+      stroke: #60a5fa;
+      animation: flowReverse 1.6s linear infinite, fadeReverse 1.6s ease-in-out infinite;
+    }
+
+    .i2-forward {
+      stroke: #dc2626;
+      animation: flowForward 1.6s linear infinite, fadeForward 1.6s ease-in-out infinite;
+    }
+
+    .i2-reverse {
+      stroke: #f97316;
+      animation: flowReverse 1.6s linear infinite, fadeReverse 1.6s ease-in-out infinite;
+    }
+
+    .current-off { display: none; }
+
+    @keyframes flowForward {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: -44; }
+    }
+
+    @keyframes flowReverse {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: 44; }
+    }
+
+    @keyframes fadeForward {
+      0%, 45% { opacity: 0.95; }
+      50%, 95% { opacity: 0.08; }
+      100% { opacity: 0.95; }
+    }
+
+    @keyframes fadeReverse {
+      0%, 45% { opacity: 0.08; }
+      50%, 95% { opacity: 0.95; }
+      100% { opacity: 0.08; }
+    }
+
+    .pulse {
+      animation: pulse 1.2s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.45; }
+      50% { opacity: 1; }
+    }
+
+    .sine-line {
+      fill: none;
+      stroke: #7c3aed;
+      stroke-width: 3;
+      stroke-linecap: round;
+    }
+
+    .load-hot {
+      fill: #fef3c7;
+      stroke: #f59e0b;
+      stroke-width: 3;
+    }
+
+    .load-off {
+      fill: #f3f4f6;
+      stroke: #9ca3af;
+      stroke-width: 3;
+    }
+
+    .status {
+      margin-top: 6px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .pill {
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Προσομοίωση Μονοφασικού Μετασχηματιστή Υποβιβασμού Τάσης</h1>
+      <div class="author">Ε. Κοκκώδης</div>
+    </header>
+
+    <div class="layout">
+      <section class="card sim-card">
+        <svg viewBox="0 0 900 560" role="img" aria-label="Προσομοίωση μετασχηματιστή υποβιβασμού τάσης">
+          <defs>
+            <linearGradient id="coreGrad" x1="0" x2="1">
+              <stop offset="0" stop-color="#d1d5db"/>
+              <stop offset="0.5" stop-color="#9ca3af"/>
+              <stop offset="1" stop-color="#6b7280"/>
+            </linearGradient>
+          </defs>
+
+          <text x="145" y="42" class="label-text" text-anchor="middle">Πρωτεύον τύλιγμα Υ.Τ.</text>
+          <text x="755" y="42" class="label-text" text-anchor="middle">Δευτερεύον τύλιγμα Χ.Τ.</text>
+          <text x="450" y="42" class="label-text" text-anchor="middle">Σιδηρομαγνητικός πυρήνας</text>
+
+          <rect x="285" y="105" width="330" height="55" rx="10" fill="url(#coreGrad)" stroke="#4b5563" stroke-width="3"/>
+          <rect x="285" y="375" width="330" height="55" rx="10" fill="url(#coreGrad)" stroke="#4b5563" stroke-width="3"/>
+          <rect x="285" y="105" width="70" height="325" rx="10" fill="url(#coreGrad)" stroke="#4b5563" stroke-width="3"/>
+          <rect x="545" y="105" width="70" height="325" rx="10" fill="url(#coreGrad)" stroke="#4b5563" stroke-width="3"/>
+          <rect x="365" y="170" width="170" height="195" rx="18" fill="#fffdf0" stroke="#e5e7eb" stroke-width="3"/>
+
+          <path id="fluxForward" class="flux flux-forward" d="M320 365 V145 H580 V392 H320 V365" />
+          <path id="fluxReverse" class="flux flux-reverse" d="M320 365 V145 H580 V392 H320 V365" />
+          <text id="ratioLabel" x="450" y="286" class="tiny-text" text-anchor="middle">K = W1/W2 = 4,00</text>
+
+          <g id="primaryCoil"></g>
+          <text x="320" y="468" class="small-text" text-anchor="middle">Πολλές σπείρες - λεπτό σύρμα</text>
+          <text id="primaryTurnsLabel" x="320" y="488" class="tiny-text" text-anchor="middle">W1 = 400 σπείρες</text>
+
+          <g id="secondaryCoil"></g>
+          <text x="580" y="468" class="small-text" text-anchor="middle">Λίγες σπείρες - χοντρό σύρμα</text>
+          <text id="secondaryTurnsLabel" x="580" y="488" class="tiny-text" text-anchor="middle">W2 = 100 σπείρες</text>
+
+          <circle cx="115" cy="258" r="52" fill="#eef2ff" stroke="#4f46e5" stroke-width="4"/>
+          <path id="sineWave" class="sine-line" d="M82 258 C92 229, 105 229, 115 258 C125 287, 138 287, 148 258" />
+          <text x="115" y="337" class="label-text" text-anchor="middle">Πηγή AC</text>
+          <text id="sourceLabel" x="115" y="358" class="small-text" text-anchor="middle">U1 = 230 V</text>
+
+          <path id="primaryWireTop" class="wire" d="M165 235 H250 V185 H285"/>
+          <path id="primaryWireBottom" class="wire" d="M285 345 H250 V281 H165" />
+          <path id="i1Forward" class="current i1-forward" d="M165 235 H250 V185 H285 M285 345 H250 V281 H165" />
+          <path id="i1Reverse" class="current i1-reverse" d="M165 235 H250 V185 H285 M285 345 H250 V281 H165" />
+          <circle cx="250" cy="185" r="5" fill="#111827"/>
+          <circle cx="250" cy="345" r="5" fill="#111827"/>
+
+          <path id="secondaryWireTop" class="wire" d="M615 185 H688"/>
+          <circle cx="688" cy="185" r="5" fill="#111827"/>
+          <line x1="688" y1="185" x2="728" y2="157" id="switchBlade" stroke="#dc2626" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="732" cy="185" r="5" fill="#111827"/>
+          <path id="secondaryWireToLoad" class="wire wire-off" d="M732 185 H790 V236"/>
+          <rect id="loadBody" x="750" y="236" width="80" height="85" rx="12" class="load-off"/>
+          <text x="790" y="286" class="label-text" text-anchor="middle">Z</text>
+          <text x="790" y="362" class="label-text" text-anchor="middle">Φορτίο</text>
+          <text id="loadLabel" x="790" y="383" class="small-text" text-anchor="middle">Z = 20 Ω</text>
+          <path id="secondaryWireBottom" class="wire" d="M790 321 V345 H615"/>
+          <path id="i2Forward" class="current i2-forward current-off" d="M615 185 H688 L732 185 H790 V236 M790 321 V345 H615" />\n          <path id="i2Reverse" class="current i2-reverse current-off" d="M615 185 H688 L732 185 H790 V236 M790 321 V345 H615" />
+
+          <rect x="75" y="410" width="150" height="70" rx="12" fill="#ffffff" stroke="#d1d5db" stroke-width="2"/>
+          <text x="150" y="435" class="small-text" text-anchor="middle">Μετρητής πρωτεύοντος</text>
+          <text id="primaryMeterSvg" x="150" y="462" class="label-text" text-anchor="middle">230 V / 0,00 A</text>
+
+          <rect x="675" y="410" width="165" height="70" rx="12" fill="#ffffff" stroke="#d1d5db" stroke-width="2"/>
+          <text x="758" y="435" class="small-text" text-anchor="middle">Μετρητής δευτερεύοντος</text>
+          <text id="secondaryMeterSvg" x="758" y="462" class="label-text" text-anchor="middle">57,5 V / 0 A</text>
+
+          <text id="switchSvgLabel" x="710" y="130" class="label-text" text-anchor="middle" fill="#dc2626">Διακόπτης: Ανοικτός</text>
+          <text id="powerFlowLabel" x="450" y="510" class="message-text" text-anchor="middle"></text>
+        </svg>
+
+        <div class="status">
+          <div class="pill" id="modePill">Μ/Σ υποβιβασμού τάσης</div>
+          <div class="pill" id="fluxPill">AC λειτουργία</div>
+          <div class="pill" id="loadPill">Φορτίο εκτός κυκλώματος</div>
+        </div>
+      </section>
+
+      <aside class="card controls">
+        <h2>Ρυθμίσεις</h2>
+
+        <div class="control">
+          <label for="u1">Τάση πρωτεύοντος U1 <span id="u1Val">230 V</span></label>
+          <input id="u1" type="range" min="20" max="400" step="10" value="230" />
+        </div>
+
+        <div class="control">
+          <label for="w1">Σπείρες πρωτεύοντος W1 <span id="w1Val">400</span></label>
+          <input id="w1" type="range" min="100" max="800" step="20" value="400" />
+        </div>
+
+        <div class="control">
+          <label for="w2">Σπείρες δευτερεύοντος W2 <span id="w2Val">100</span></label>
+          <input id="w2" type="range" min="20" max="400" step="10" value="100" />
+        </div>
+
+        <div class="control">
+          <label for="zLoad">Σύνθετη αντίσταση Z <span id="zLoadVal">20 Ω</span></label>
+          <input id="zLoad" type="range" min="5" max="100" step="5" value="20" />
+        </div>
+
+        <div class="control">
+          <label for="cosphi">Συνφ φορτίου <span id="cosphiVal">0,80</span></label>
+          <input id="cosphi" type="range" min="0.50" max="1.00" step="0.05" value="0.80" />
+        </div>
+
+        <div class="control">
+          <label for="freq">Συχνότητα f <span id="freqVal">50 Hz</span></label>
+          <input id="freq" type="range" min="25" max="70" step="5" value="50" />
+        </div>
+
+        <div class="switch-row">
+          <strong>Διακόπτης φορτίου</strong>
+          <button id="switchBtn" class="toggle">Ανοικτός</button>
+        </div>
+
+        <div class="meters">
+          <div class="meter">
+            <div class="name">K = W1/W2</div>
+            <div class="value" id="kVal">4,00</div>
+          </div>
+          <div class="meter">
+            <div class="name">Τάση U2</div>
+            <div class="value" id="u2Val">57,50 V</div>
+          </div>
+          <div class="meter">
+            <div class="name">Ρεύμα I1</div>
+            <div class="value" id="i1Val">0,00 A</div>
+          </div>
+          <div class="meter">
+            <div class="name">Ρεύμα I2</div>
+            <div class="value" id="i2Val">0,00 A</div>
+          </div>
+          <div class="meter">
+            <div class="name">Φαινόμενη S2</div>
+            <div class="value" id="s2Val">0,00 VA</div>
+          </div>
+          <div class="meter">
+            <div class="name">Ενεργός P2</div>
+            <div class="value" id="p2Val">0,00 W</div>
+          </div>
+          <div class="meter">
+            <div class="name">Άεργος Q2</div>
+            <div class="value" id="q2Val">0,00 var</div>
+          </div>
+          <div class="meter">
+            <div class="name">Συνφ</div>
+            <div class="value" id="pfVal">0,80</div>
+          </div>
+          <div class="meter">
+            <div class="name">Τύπος</div>
+            <div class="value" id="typeVal">Μ/Σ Υποβ.</div>
+          </div>
+        </div>
+
+        <div class="note">
+          Σχέσεις ιδανικού Μ/Σ: <strong>K = W1/W2 = U1/U2</strong>. Για σύνθετο φορτίο: <strong>I2 = U2/Z</strong>, <strong>S2 = U2·I2</strong>, <strong>P2 = S2·συνφ</strong>, <strong>Q2 = S2·ημφ</strong>.
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const els = {
+      u1: document.getElementById('u1'),
+      w1: document.getElementById('w1'),
+      w2: document.getElementById('w2'),
+      zLoad: document.getElementById('zLoad'),
+      cosphi: document.getElementById('cosphi'),
+      freq: document.getElementById('freq'),
+      switchBtn: document.getElementById('switchBtn'),
+      primaryCoil: document.getElementById('primaryCoil'),
+      secondaryCoil: document.getElementById('secondaryCoil'),
+      secondaryWireTop: document.getElementById('secondaryWireTop'),
+      secondaryWireToLoad: document.getElementById('secondaryWireToLoad'),
+      secondaryWireBottom: document.getElementById('secondaryWireBottom'),
+      switchBlade: document.getElementById('switchBlade'),
+      switchSvgLabel: document.getElementById('switchSvgLabel'),
+      loadBody: document.getElementById('loadBody'),
+      fluxForward: document.getElementById('fluxForward'),
+      fluxReverse: document.getElementById('fluxReverse'),
+      i1Forward: document.getElementById('i1Forward'),
+      i1Reverse: document.getElementById('i1Reverse'),
+      i2Forward: document.getElementById('i2Forward'),
+      i2Reverse: document.getElementById('i2Reverse'),
+      sineWave: document.getElementById('sineWave'),
+      sourceLabel: document.getElementById('sourceLabel'),
+      primaryTurnsLabel: document.getElementById('primaryTurnsLabel'),
+      secondaryTurnsLabel: document.getElementById('secondaryTurnsLabel'),
+      primaryMeterSvg: document.getElementById('primaryMeterSvg'),
+      secondaryMeterSvg: document.getElementById('secondaryMeterSvg'),
+      ratioLabel: document.getElementById('ratioLabel'),
+      powerFlowLabel: document.getElementById('powerFlowLabel'),
+      modePill: document.getElementById('modePill'),
+      fluxPill: document.getElementById('fluxPill'),
+      loadPill: document.getElementById('loadPill'),
+      u1Val: document.getElementById('u1Val'),
+      w1Val: document.getElementById('w1Val'),
+      w2Val: document.getElementById('w2Val'),
+      zLoadVal: document.getElementById('zLoadVal'),
+      cosphiVal: document.getElementById('cosphiVal'),
+      freqVal: document.getElementById('freqVal'),
+      kVal: document.getElementById('kVal'),
+      u2Val: document.getElementById('u2Val'),
+      i1Val: document.getElementById('i1Val'),
+      i2Val: document.getElementById('i2Val'),
+      s2Val: document.getElementById('s2Val'),
+      p2Val: document.getElementById('p2Val'),
+      q2Val: document.getElementById('q2Val'),
+      pfVal: document.getElementById('pfVal'),
+      typeVal: document.getElementById('typeVal'),
+      loadLabel: document.getElementById('loadLabel')
+    };
+
+    let switchClosed = false;
+    let phase = 0;
+
+    function fmt(value, decimals = 2) {
+      return Number(value).toLocaleString('el-GR', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    function setSvgTextLines(element, lines) {
+      element.textContent = '';
+      lines.forEach((line, index) => {
+        const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        tspan.setAttribute('x', '450');
+        tspan.setAttribute('dy', index === 0 ? '0' : '18');
+        tspan.textContent = line;
+        element.appendChild(tspan);
+      });
+    }
+
+    function clearGroup(group) {
+      while (group.firstChild) group.removeChild(group.firstChild);
+    }
+
+    function makeCoil(group, cx, top, bottom, turns, color, strokeWidth, amplitude) {
+      clearGroup(group);
+      const visibleTurns = Math.max(5, Math.min(26, turns));
+      const height = bottom - top;
+      const pitch = height / visibleTurns;
+      let d = `M ${cx} ${top}`;
+
+      for (let i = 0; i < visibleTurns; i++) {
+        const y1 = top + i * pitch;
+        const yMid = y1 + pitch / 2;
+        const y2 = y1 + pitch;
+        d += ` C ${cx - amplitude} ${y1 + pitch * 0.15}, ${cx - amplitude} ${yMid - pitch * 0.12}, ${cx} ${yMid}`;
+        d += ` C ${cx + amplitude} ${yMid + pitch * 0.12}, ${cx + amplitude} ${y2 - pitch * 0.15}, ${cx} ${y2}`;
+      }
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', color);
+      path.setAttribute('stroke-width', strokeWidth);
+      path.setAttribute('stroke-linecap', 'round');
+      path.setAttribute('stroke-linejoin', 'round');
+      group.appendChild(path);
+
+      for (let i = 0; i <= visibleTurns; i += 4) {
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', cx);
+        dot.setAttribute('cy', top + i * pitch);
+        dot.setAttribute('r', strokeWidth * 0.55);
+        dot.setAttribute('fill', color);
+        dot.setAttribute('opacity', '0.65');
+        group.appendChild(dot);
+      }
+    }
+
+    function setWireState(el, active) {
+      el.classList.toggle('wire-off', !active);
+    }
+
+    function setAnimationSpeed(f) {
+      const fluxDuration = Math.max(0.7, 2.4 - f / 38);
+      const currentDuration = Math.max(0.55, 2.0 - f / 48);
+
+      els.fluxForward.style.animationDuration = `${fluxDuration}s, ${fluxDuration}s`;
+      els.fluxReverse.style.animationDuration = `${fluxDuration}s, ${fluxDuration}s`;
+      els.i1Forward.style.animationDuration = `${currentDuration}s, ${currentDuration}s`;
+      els.i1Reverse.style.animationDuration = `${currentDuration}s, ${currentDuration}s`;
+      els.i2Forward.style.animationDuration = `${currentDuration}s, ${currentDuration}s`;
+      els.i2Reverse.style.animationDuration = `${currentDuration}s, ${currentDuration}s`;
+    }
+
+    function update() {
+      const U1 = Number(els.u1.value);
+      const W1 = Number(els.w1.value);
+      const W2 = Number(els.w2.value);
+      const Z = Number(els.zLoad.value);
+      const cosphi = Number(els.cosphi.value);
+      const f = Number(els.freq.value);
+      const sinphi = Math.sqrt(Math.max(0, 1 - cosphi * cosphi));
+      const K = W1 / W2;
+      const U2 = U1 * (W2 / W1);
+      const I2 = switchClosed ? U2 / Z : 0;
+      const S2 = U2 * I2;
+      const P2 = S2 * cosphi;
+      const Q2 = S2 * sinphi;
+      const I1 = switchClosed ? S2 / Math.max(U1, 0.001) : 0;
+
+      let type = 'Μ/Σ απομόνωσης';
+      let typeShort = '1:1';
+      if (U2 < U1) {
+        type = 'Μ/Σ υποβιβασμού τάσης';
+        typeShort = 'Μ/Σ Υποβ.';
+      } else if (U2 > U1) {
+        type = 'Μ/Σ ανύψωσης τάσης';
+        typeShort = 'Μ/Σ Ανυψ.';
+      }
+
+      els.u1Val.textContent = `${U1} V`;
+      els.w1Val.textContent = W1;
+      els.w2Val.textContent = W2;
+      els.zLoadVal.textContent = `${Z} Ω`;
+      els.cosphiVal.textContent = fmt(cosphi, 2);
+      els.freqVal.textContent = `${f} Hz`;
+      els.kVal.textContent = fmt(K, 2);
+      els.u2Val.textContent = `${fmt(U2, 2)} V`;
+      els.i1Val.textContent = `${fmt(I1, 2)} A`;
+      els.i2Val.textContent = `${fmt(I2, 2)} A`;
+      els.s2Val.textContent = `${fmt(S2, 2)} VA`;
+      els.p2Val.textContent = `${fmt(P2, 2)} W`;
+      els.q2Val.textContent = `${fmt(Q2, 2)} var`;
+      els.pfVal.textContent = fmt(cosphi, 2);
+      els.typeVal.textContent = typeShort;
+
+      els.sourceLabel.textContent = `U1 = ${U1} V`;
+      els.primaryTurnsLabel.textContent = `W1 = ${W1} σπείρες`;
+      els.secondaryTurnsLabel.textContent = `W2 = ${W2} σπείρες`;
+      els.loadLabel.textContent = `Z = ${Z} Ω, συνφ = ${fmt(cosphi, 2)}`;
+      els.ratioLabel.textContent = `K = W1/W2 = ${fmt(K, 2)}`;
+      els.primaryMeterSvg.textContent = `${fmt(U1, 0)} V / ${fmt(I1, 2)} A`;
+      els.secondaryMeterSvg.textContent = `${fmt(U2, 1)} V / ${fmt(I2, 2)} A`;
+      els.modePill.textContent = type;
+
+      const primaryVisible = Math.round(10 + (W1 - 100) / 700 * 16);
+      const secondaryVisible = Math.round(5 + (W2 - 20) / 380 * 10);
+      makeCoil(els.primaryCoil, 320, 168, 352, primaryVisible, '#2563eb', 2.5, 34);
+      makeCoil(els.secondaryCoil, 580, 178, 342, secondaryVisible, '#dc2626', 7.5, 34);
+
+      setWireState(els.secondaryWireTop, switchClosed);
+      setWireState(els.secondaryWireToLoad, switchClosed);
+      setWireState(els.secondaryWireBottom, switchClosed);
+      els.i2Forward.classList.toggle('current-off', !switchClosed);
+      els.i2Reverse.classList.toggle('current-off', !switchClosed);
+
+      if (switchClosed) {
+        els.switchBtn.classList.add('on');
+        els.switchBtn.textContent = 'Κλειστός';
+        els.switchBlade.setAttribute('x2', '732');
+        els.switchBlade.setAttribute('y2', '185');
+        els.switchBlade.setAttribute('stroke', '#16a34a');
+        els.switchSvgLabel.textContent = 'Διακόπτης: Κλειστός';
+        els.switchSvgLabel.setAttribute('fill', '#16a34a');
+        els.loadBody.setAttribute('class', 'load-hot pulse');
+        setSvgTextLines(els.powerFlowLabel, [
+          'Ο διακόπτης είναι κλειστός: το φορτίο Z τροφοδοτείται από το δευτερεύον.',
+          `S2 = ${fmt(S2, 2)} VA, P2 = ${fmt(P2, 2)} W, Q2 = ${fmt(Q2, 2)} var.`
+        ]);
+        els.loadPill.textContent = 'Σύνθετο φορτίο Z εντός κυκλώματος';
+      } else {
+        els.switchBtn.classList.remove('on');
+        els.switchBtn.textContent = 'Ανοικτός';
+        els.switchBlade.setAttribute('x2', '728');
+        els.switchBlade.setAttribute('y2', '157');
+        els.switchBlade.setAttribute('stroke', '#dc2626');
+        els.switchSvgLabel.textContent = 'Διακόπτης: Ανοικτός';
+        els.switchSvgLabel.setAttribute('fill', '#dc2626');
+        els.loadBody.setAttribute('class', 'load-off');
+        setSvgTextLines(els.powerFlowLabel, [
+          'Ο διακόπτης είναι ανοικτός: στο δευτερεύον εμφανίζεται τάση U2,',
+          'αλλά δεν υπάρχει ρεύμα I2, οπότε S2, P2 και Q2 είναι μηδέν.'
+        ]);
+        els.loadPill.textContent = 'Φορτίο εκτός κυκλώματος';
+      }
+
+      const fluxWidth = Math.min(7, 3.5 + U1 / 140);
+      const i1Width = switchClosed ? Math.min(7, 3.5 + I1) : 4.5;
+      const i2Width = Math.min(8, 3.5 + I2 / 2);
+      els.fluxForward.style.strokeWidth = `${fluxWidth}px`;
+      els.fluxReverse.style.strokeWidth = `${fluxWidth}px`;
+      els.i1Forward.style.strokeWidth = `${i1Width}px`;
+      els.i1Reverse.style.strokeWidth = `${i1Width}px`;
+      els.i2Forward.style.strokeWidth = `${i2Width}px`;
+      els.i2Reverse.style.strokeWidth = `${i2Width}px`;
+      els.fluxPill.textContent = `AC λειτουργία - ${f} Hz`;
+      setAnimationSpeed(f);
+    }
+
+    function animate() {
+      const f = Number(els.freq.value);
+      phase += 0.025 * (f / 50);
+      const center = 258;
+      const points = [];
+      for (let x = 82; x <= 148; x += 3) {
+        const t = (x - 82) / 66 * Math.PI * 2;
+        const y = center + Math.sin(t + phase) * 15.4;
+        points.push(`${x},${y}`);
+      }
+      els.sineWave.setAttribute('d', `M ${points.join(' L ')}`);
+      requestAnimationFrame(animate);
+    }
+
+    ['input', 'change'].forEach(evt => {
+      els.u1.addEventListener(evt, update);
+      els.w1.addEventListener(evt, update);
+      els.w2.addEventListener(evt, update);
+      els.zLoad.addEventListener(evt, update);
+      els.cosphi.addEventListener(evt, update);
+      els.freq.addEventListener(evt, update);
+    });
+
+    els.switchBtn.addEventListener('click', () => {
+      switchClosed = !switchClosed;
+      update();
+    });
+
+    update();
+    animate();
+  </script>
+</body>
+</html>
