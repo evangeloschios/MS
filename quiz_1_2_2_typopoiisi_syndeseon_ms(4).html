@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Κουίζ 1.2.2 - Τυποποίηση συνδέσεων Μ/Σ</title>
+<style>
+:root {
+  --b:#1d4ed8; --bd:#0f3b82; --bl:#e8f0ff; --g:#15803d; --gl:#e9f8ef;
+  --r:#b91c1c; --rl:#fff0f0; --o:#f97316; --ol:#fff7ed; --br:#d1d5db; --tx:#1f2937;
+}
+* { box-sizing:border-box; }
+body { margin:0; font-family:"Segoe UI", Arial, sans-serif; background:linear-gradient(180deg,#eef6ff,#fff); color:var(--tx); line-height:1.55; }
+header { background:linear-gradient(135deg,#0f3b82,#2563eb); color:white; text-align:center; padding:30px 16px; }
+main { max-width:1120px; margin:22px auto; padding:0 14px 42px; }
+section { background:white; border:1px solid var(--br); border-radius:18px; box-shadow:0 7px 20px #0001; margin:18px 0; padding:22px; }
+h1 { margin:0 0 8px; font-size:clamp(1.35rem,3vw,2.2rem); }
+h2 { margin-top:0; color:var(--bd); border-left:6px solid var(--b); padding-left:12px; }
+.note { background:var(--bl); border-left:5px solid var(--b); border-radius:12px; padding:12px 14px; margin:12px 0; }
+.warn { background:var(--ol); border-left:5px solid var(--o); border-radius:12px; padding:12px 14px; margin:12px 0; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; }
+.box,.q,.scenario { background:#fbfdff; border:1px solid #e5e7eb; border-radius:14px; padding:14px; }
+.tag { display:inline-block; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:4px 8px; margin:2px; font-weight:800; }
+label.opt { display:block; background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:8px 10px; margin:6px 0; cursor:pointer; }
+button { background:var(--b); color:white; border:0; border-radius:12px; padding:10px 14px; font-weight:700; cursor:pointer; margin:6px 6px 6px 0; }
+button.gray { background:#475569; } button.orange { background:var(--o); }
+.res,.fb { display:none; margin-top:10px; border-radius:12px; padding:10px 12px; font-weight:700; }
+.ok { background:var(--gl); color:var(--g); border:1px solid #a7f3d0; }
+.bad { background:var(--rl); color:var(--r); border:1px solid #fecaca; }
+.key { display:none; background:var(--ol); border:1px solid #fed7aa; border-left:5px solid var(--o); border-radius:12px; margin-top:12px; padding:12px; }
+.correct { background:var(--gl)!important; border-color:#86efac!important; }
+.wrong { background:var(--rl)!important; border-color:#fecaca!important; }
+.bank,.dropgrid { border:1px dashed #cbd5e1; border-radius:16px; padding:14px; background:#f8fafc; touch-action:manipulation; }
+.chips { display:flex; flex-wrap:wrap; gap:10px; min-height:54px; }
+.chip { background:white; border:1px solid #cbd5e1; border-radius:999px; padding:9px 12px; cursor:grab; user-select:none; box-shadow:0 2px 7px #0000000d; }
+.chip.selected { outline:3px solid #fbbf24; background:#fffbeb; }
+.dropgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(245px,1fr)); gap:12px; }
+.zone { background:white; border:2px dashed #cbd5e1; border-radius:16px; padding:12px; min-height:175px; }
+.zone.over { background:#eef6ff; border-color:#60a5fa; }
+.zone h3 { margin:0 0 8px; color:var(--bd); font-size:1rem; }
+.zone .chips { display:block; }
+.zone .chip { display:block; border-radius:12px; margin:7px 0; }
+.chip.good { background:var(--gl); border-color:#86efac; }
+.chip.miss { background:var(--rl); border-color:#fecaca; }
+@media print { header,button { display:none; } .key { display:block; } section { box-shadow:none; } }
+</style>
+</head>
+<body>
+<header>
+<h1>Παρουσίαση – Εξάσκηση: Τυποποίηση συνδέσεων Μ/Σ</h1>
+<p>Κεφ. 1.2.2 — ακροδέκτες, συμβολισμοί, μονοφασικοί και τριφασικοί Μ/Σ, σύνδεση στο δίκτυο και τάσεις λειτουργίας.</p>
+</header>
+<main>
+
+<section>
+<h2>Σύντομη παρουσίαση</h2>
+<div class="grid">
+<div class="box"><h3>Ακροδέκτες</h3><p>Τα άκρα των τυλιγμάτων καταλήγουν σε ακροδέκτες. Για να ξεχωρίζονται, χρησιμοποιούνται γράμματα ή αριθμοί.</p></div>
+<div class="box"><h3>1~ Μ/Σ</h3><p>Υ.Τ.: <span class="tag">U–V</span> <span class="tag">A–B</span> <span class="tag">H₁–H₂</span><br>Χ.Τ.: <span class="tag">u–v</span> <span class="tag">a–b</span> <span class="tag">x₁–x₂</span></p></div>
+<div class="box"><h3>Μεσαία λήψη</h3><p>Αν υπάρχει μεσαία λήψη, ο ακροδέκτης σημειώνεται με <span class="tag">n</span>, <span class="tag">nₚ</span> ή <span class="tag">xₒ</span>.</p></div>
+<div class="box"><h3>3~ Μ/Σ</h3><p>Τα τυλίγματα Υ.Τ. και Χ.Τ. συνδέονται εσωτερικά σε <strong>αστέρα</strong> ή <strong>τρίγωνο</strong>.</p></div>
+<div class="box"><h3>Συμβολισμοί 3~</h3><p>Υ.Τ.: <span class="tag">U,V,W</span> <span class="tag">A,B,C</span> <span class="tag">H₁,H₂,H₃</span><br>Χ.Τ.: <span class="tag">u,v,w</span> <span class="tag">a,b,c</span> <span class="tag">x₁,x₂,x₃</span></p></div>
+<div class="box"><h3>Ουδέτερος</h3><p>Υ.Τ.: <span class="tag">N</span> <span class="tag">Mₚ</span> <span class="tag">Hₒ</span><br>Χ.Τ.: <span class="tag">n</span> <span class="tag">mₚ</span> <span class="tag">xₒ</span> <span class="tag">x₄</span></p></div>
+</div>
+<div class="warn"><strong>Κλειδί:</strong> τα κεφαλαία γράμματα χρησιμοποιούνται συνήθως για την πλευρά Υ.Τ., ενώ τα μικρά για την πλευρά Χ.Τ.</div>
+</section>
+
+<section>
+<h2>Μέρος Α — Κουίζ θεωρίας</h2>
+<div id="quizA"></div>
+<button onclick="checkA()">Έλεγχος</button><button class="gray" onclick="resetA()">Καθαρισμός</button><button class="orange" onclick="toggle('keyA')">Λύσεις</button>
+<div id="resA" class="res"></div><div id="keyA" class="key"></div>
+</section>
+
+<section>
+<h2>Μέρος Β — Drag & Drop: Ταξινόμηση συμβολισμών</h2>
+<div class="note">Σύρε κάθε καρτέλα στη σωστή κατηγορία. Σε κινητό/tablet πάτησε καρτέλα και μετά το πλαίσιο κατηγορίας.</div>
+<div class="bank"><h3>Καρτέλες</h3><div id="bank" class="chips"></div></div><br>
+<div class="dropgrid">
+<div class="zone" data-zone="oneHT"><h3>Α. 1~ Μ/Σ — Υ.Τ.</h3><div class="chips"></div></div>
+<div class="zone" data-zone="oneLT"><h3>Β. 1~ Μ/Σ — Χ.Τ.</h3><div class="chips"></div></div>
+<div class="zone" data-zone="mid"><h3>Γ. Μεσαία λήψη / ουδέτερος Χ.Τ.</h3><div class="chips"></div></div>
+<div class="zone" data-zone="threeHT"><h3>Δ. 3~ Μ/Σ — Υ.Τ.</h3><div class="chips"></div></div>
+<div class="zone" data-zone="threeLT"><h3>Ε. 3~ Μ/Σ — Χ.Τ.</h3><div class="chips"></div></div>
+<div class="zone" data-zone="conn"><h3>ΣΤ. Συνδεσμολογίες</h3><div class="chips"></div></div>
+</div>
+<button onclick="checkDrag()">Έλεγχος ταξινόμησης</button><button class="gray" onclick="resetDrag()">Ανακάτεμα</button><button class="orange" onclick="toggle('keyB')">Λύσεις</button>
+<div id="resB" class="res"></div><div id="keyB" class="key"></div>
+</section>
+
+<section>
+<h2>Μέρος Γ — Σενάρια εφαρμογής</h2>
+<div class="note">Διάβασε κάθε σενάριο και επίλεξε τη σωστή απάντηση.</div>
+<div id="scenarios" class="grid"></div>
+<button onclick="checkC()">Έλεγχος</button><button class="gray" onclick="resetC()">Καθαρισμός</button><button class="orange" onclick="toggle('keyC')">Λύσεις</button>
+<div id="resC" class="res"></div><div id="keyC" class="key"></div>
+</section>
+
+</main>
+<script>
+const questions = [{"q": "Τα άκρα των τυλιγμάτων των Μ/Σ καταλήγουν σε ακροδέκτες.", "choices": ["Λάθος", "Σωστό"], "correct": 1, "exp": "Σωστό. Οι ακροδέκτες επιτρέπουν την εξωτερική σύνδεση των τυλιγμάτων."}, {"q": "Στους μονοφασικούς Μ/Σ, η πλευρά υψηλής τάσης μπορεί να σημειώνεται με U–V.", "choices": ["Σωστό", "Λάθος"], "correct": 0, "exp": "Σωστό. Η πλευρά Υ.Τ. μπορεί να σημειώνεται και με A–B ή H₁–H₂."}, {"q": "Στους μονοφασικούς Μ/Σ, η πλευρά χαμηλής τάσης μπορεί να σημειώνεται με:", "choices": ["u–v", "U–V", "H₁–H₂", "A–B"], "correct": 0, "exp": "Η πλευρά Χ.Τ. σημειώνεται με μικρά γράμματα ή με x₁–x₂."}, {"q": "Η μεσαία λήψη μπορεί να συμβολίζεται με n, nₚ ή xₒ.", "choices": ["Λάθος", "Σωστό"], "correct": 1, "exp": "Σωστό. Αυτοί είναι συμβολισμοί που χρησιμοποιούνται για μεσαία λήψη/ουδέτερο."}, {"q": "Στους τριφασικούς Μ/Σ, τα τυλίγματα συνδέονται εσωτερικά μόνο σε σειρά.", "choices": ["Σωστό", "Λάθος"], "correct": 1, "exp": "Λάθος. Τα τυλίγματα μπορούν να συνδεθούν σε αστέρα ή τρίγωνο."}, {"q": "Τα άκρα των τριφασικών τυλιγμάτων καταλήγουν στην πινακίδα ή στο κιβώτιο ακροδεκτών.", "choices": ["Σωστό", "Λάθος"], "correct": 0, "exp": "Σωστό. Έτσι γίνεται η εξωτερική σύνδεση."}, {"q": "Για τα τυλίγματα Υ.Τ. τριφασικού Μ/Σ χρησιμοποιούνται συμβολισμοί όπως U,V,W ή H₁,H₂,H₃.", "choices": ["Λάθος", "Σωστό"], "correct": 1, "exp": "Σωστό. Αυτοί είναι τυπικοί συμβολισμοί για την πλευρά υψηλής τάσης."}, {"q": "Για τα τυλίγματα Χ.Τ. τριφασικού Μ/Σ χρησιμοποιούνται συμβολισμοί όπως u,v,w ή x₁,x₂,x₃.", "choices": ["Σωστό", "Λάθος"], "correct": 0, "exp": "Σωστό. Αυτοί είναι τυπικοί συμβολισμοί για την πλευρά χαμηλής τάσης."}, {"q": "Ο ουδέτερος της Χ.Τ. μπορεί να συμβολίζεται με:", "choices": ["N ή Hₒ μόνο", "n, mₚ, xₒ ή x₄", "U,V,W", "A,B,C"], "correct": 1, "exp": "Για ουδέτερο στη Χ.Τ. χρησιμοποιούνται συμβολισμοί όπως n, mₚ, xₒ ή x₄."}, {"q": "Η τάση δευτερεύοντος με φορτίο εξαρτάται από το ρεύμα φόρτισης και το είδος του φορτίου.", "choices": ["Λάθος", "Σωστό"], "correct": 1, "exp": "Σωστό. Παίζει ρόλο αν το φορτίο είναι ωμικό, επαγωγικό ή χωρητικό."}];
+const cards = [{"text": "U–V", "zone": "oneHT"}, {"text": "A–B", "zone": "oneHT"}, {"text": "H₁–H₂", "zone": "oneHT"}, {"text": "u–v", "zone": "oneLT"}, {"text": "a–b", "zone": "oneLT"}, {"text": "x₁–x₂", "zone": "oneLT"}, {"text": "n", "zone": "mid"}, {"text": "nₚ", "zone": "mid"}, {"text": "xₒ", "zone": "mid"}, {"text": "U,V,W", "zone": "threeHT"}, {"text": "A,B,C", "zone": "threeHT"}, {"text": "H₁,H₂,H₃", "zone": "threeHT"}, {"text": "u,v,w", "zone": "threeLT"}, {"text": "a,b,c", "zone": "threeLT"}, {"text": "x₁,x₂,x₃", "zone": "threeLT"}, {"text": "Αστέρας", "zone": "conn"}, {"text": "Τρίγωνο", "zone": "conn"}, {"text": "Yd", "zone": "conn"}, {"text": "Dy", "zone": "conn"}];
+const scenarios = [{"q": "Σε έναν μονοφασικό Μ/Σ βλέπεις ακροδέκτες U και V. Σε ποια πλευρά αναφέρονται;", "choices": ["Χαμηλή τάση", "Υψηλή τάση", "Μεσαία λήψη", "Ουδέτερος Χ.Τ."], "correct": 1, "exp": "U–V είναι συμβολισμός πλευράς Υ.Τ. σε μονοφασικό Μ/Σ."}, {"q": "Σε έναν μονοφασικό Μ/Σ βλέπεις x₁ και x₂. Τι δείχνουν;", "choices": ["Ακροδέκτες Χ.Τ.", "Ακροδέκτες Υ.Τ.", "Συνδεσμολογία τριγώνου", "Μονωτήρες διέλευσης"], "correct": 0, "exp": "x₁–x₂ είναι συμβολισμός πλευράς Χ.Τ."}, {"q": "Σε έναν Μ/Σ υπάρχει μεσαία λήψη στη Χ.Τ. Ποιος συμβολισμός ταιριάζει;", "choices": ["U", "H₁", "xₒ", "V"], "correct": 2, "exp": "Η μεσαία λήψη μπορεί να συμβολίζεται με n, nₚ ή xₒ."}, {"q": "Σε τριφασικό Μ/Σ η ένδειξη U,V,W αντιστοιχεί συνήθως:", "choices": ["στη Χ.Τ.", "στην Υ.Τ.", "στον ουδέτερο Χ.Τ.", "στο φορτίο"], "correct": 1, "exp": "U,V,W είναι τυπικός συμβολισμός τυλιγμάτων Υ.Τ."}, {"q": "Σε τριφασικό Μ/Σ η ένδειξη u,v,w αντιστοιχεί:", "choices": ["στην Υ.Τ.", "στον πυρήνα", "στη Χ.Τ.", "στους μονωτήρες"], "correct": 2, "exp": "u,v,w είναι τυπικός συμβολισμός τυλιγμάτων Χ.Τ."}, {"q": "Αν χρειάζεται ουδέτερος αγωγός στην πλευρά Χ.Τ., ποιος συμβολισμός μπορεί να χρησιμοποιηθεί;", "choices": ["n ή xₒ", "U ή V", "H₁ ή H₂", "A ή B"], "correct": 0, "exp": "Για ουδέτερο Χ.Τ. χρησιμοποιούνται n, mₚ, xₒ ή x₄."}, {"q": "Σε τριφασικό Μ/Σ οι εσωτερικές συνδέσεις των τυλιγμάτων γίνονται συνήθως:", "choices": ["μόνο σε ευθεία γραμμή", "σε αστέρα ή τρίγωνο", "μόνο με μεσαία λήψη", "χωρίς πινακίδα"], "correct": 1, "exp": "Οι τρεις φάσεις μπορούν να συνδεθούν σε αστέρα ή τρίγωνο."}, {"q": "Σε λειτουργία Μ/Σ με φορτίο, η τάση U₂ επηρεάζεται από:", "choices": ["το ρεύμα φόρτισης και το είδος φορτίου", "μόνο το χρώμα του δοχείου", "μόνο τη συχνότητα χωρίς φορτίο", "μόνο τον αριθμό μονωτήρων"], "correct": 0, "exp": "Η U₂ εξαρτάται από το ρεύμα φόρτισης και το είδος του φορτίου."}];
+
+function shuffle(a) {
+  const arr = [...a];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function toggle(id) {
+  const e = document.getElementById(id);
+  e.style.display = e.style.display === "block" ? "none" : "block";
+}
+
+function renderA() {
+  const box = document.getElementById("quizA");
+  box.innerHTML = "";
+  questions.forEach((q, i) => {
+    const div = document.createElement("div");
+    div.className = "q";
+    let html = `<p><b>${i + 1}. ${q.q}</b></p>`;
+    q.choices.forEach((c, j) => {
+      html += `<label class="opt"><input type="radio" name="qa${i}" value="${j}"> ${c}</label>`;
+    });
+    div.innerHTML = html;
+    box.appendChild(div);
+  });
+  document.getElementById("keyA").innerHTML = "<b>Λύσεις:</b><br>" + questions.map((q,i)=>`${i+1}. ${q.choices[q.correct]} — ${q.exp}`).join("<br>");
+}
+
+function checkA() {
+  let score = 0;
+  questions.forEach((q, i) => {
+    document.querySelectorAll(`input[name="qa${i}"]`).forEach(inp => {
+      const lab = inp.closest("label");
+      lab.classList.remove("correct","wrong");
+      if (Number(inp.value) === q.correct) lab.classList.add("correct");
+      if (inp.checked && Number(inp.value) !== q.correct) lab.classList.add("wrong");
+    });
+    const checked = document.querySelector(`input[name="qa${i}"]:checked`);
+    if (checked && Number(checked.value) === q.correct) score++;
+  });
+  const r = document.getElementById("resA");
+  r.style.display = "block";
+  r.className = "res " + (score >= 8 ? "ok" : "bad");
+  r.textContent = `Σκορ: ${score}/${questions.length}`;
+}
+
+function resetA() {
+  document.querySelectorAll("#quizA input").forEach(i => i.checked = false);
+  document.querySelectorAll("#quizA label").forEach(l => l.classList.remove("correct","wrong"));
+  document.getElementById("resA").style.display = "none";
+}
+
+let selected = null;
+
+function addChipEvents(chip) {
+  chip.draggable = true;
+  chip.addEventListener("dragstart", e => e.dataTransfer.setData("text/plain", chip.id));
+  chip.addEventListener("click", () => {
+    if (selected) selected.classList.remove("selected");
+    selected = chip;
+    chip.classList.add("selected");
+  });
+}
+
+function renderDrag() {
+  const bank = document.getElementById("bank");
+  bank.innerHTML = "";
+  document.querySelectorAll(".zone .chips").forEach(z => z.innerHTML = "");
+  shuffle(cards).forEach((c, i) => {
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.textContent = c.text;
+    chip.dataset.zone = c.zone;
+    chip.id = "chip_" + i + "_" + Math.random().toString(16).slice(2);
+    addChipEvents(chip);
+    bank.appendChild(chip);
+  });
+  document.getElementById("resB").style.display = "none";
+  document.getElementById("keyB").innerHTML =
+    "<b>Λύσεις:</b><br>" +
+    "1~ Υ.Τ.: U–V, A–B, H₁–H₂<br>" +
+    "1~ Χ.Τ.: u–v, a–b, x₁–x₂<br>" +
+    "Μεσαία λήψη / ουδέτερος Χ.Τ.: n, nₚ, xₒ<br>" +
+    "3~ Υ.Τ.: U,V,W, A,B,C, H₁,H₂,H₃<br>" +
+    "3~ Χ.Τ.: u,v,w, a,b,c, x₁,x₂,x₃<br>" +
+    "Συνδεσμολογίες: Αστέρας, Τρίγωνο, Yd, Dy.";
+}
+
+function setupDrop() {
+  function enable(target, list) {
+    target.addEventListener("dragover", e => {
+      e.preventDefault();
+      const z = target.closest(".zone");
+      if (z) z.classList.add("over");
+    });
+    target.addEventListener("dragleave", e => {
+      const z = target.closest(".zone");
+      if (z && !z.contains(e.relatedTarget)) z.classList.remove("over");
+    });
+    target.addEventListener("drop", e => {
+      e.preventDefault();
+      const id = e.dataTransfer.getData("text/plain");
+      const chip = document.getElementById(id);
+      if (chip) list.appendChild(chip);
+      const z = target.closest(".zone");
+      if (z) z.classList.remove("over");
+    });
+    target.addEventListener("click", e => {
+      if (e.target.classList && e.target.classList.contains("chip")) return;
+      if (selected && list !== selected.parentElement) {
+        list.appendChild(selected);
+        selected.classList.remove("selected");
+        selected = null;
+      }
+    });
+  }
+  enable(document.querySelector(".bank"), document.getElementById("bank"));
+  document.querySelectorAll(".zone").forEach(z => {
+    const list = z.querySelector(".chips");
+    enable(z, list);
+    enable(list, list);
+  });
+}
+
+function checkDrag() {
+  let score = 0;
+  document.querySelectorAll(".chip").forEach(chip => {
+    chip.classList.remove("good","miss");
+    const z = chip.closest(".zone");
+    if (z && z.dataset.zone === chip.dataset.zone) {
+      chip.classList.add("good");
+      score++;
+    } else {
+      chip.classList.add("miss");
+    }
+  });
+  const r = document.getElementById("resB");
+  r.style.display = "block";
+  r.className = "res " + (score >= 16 ? "ok" : "bad");
+  r.textContent = `Σκορ: ${score}/${cards.length}`;
+}
+
+function resetDrag() {
+  renderDrag();
+}
+
+function renderC() {
+  const box = document.getElementById("scenarios");
+  box.innerHTML = "";
+  scenarios.forEach((q, i) => {
+    const div = document.createElement("div");
+    div.className = "scenario";
+    let html = `<p><b>${i + 1}. ${q.q}</b></p>`;
+    q.choices.forEach((c, j) => {
+      html += `<label class="opt"><input type="radio" name="sc${i}" value="${j}"> ${c}</label>`;
+    });
+    html += `<div id="fb${i}" class="fb"></div>`;
+    div.innerHTML = html;
+    box.appendChild(div);
+  });
+  document.getElementById("keyC").innerHTML = "<b>Λύσεις:</b><br>" + scenarios.map((q,i)=>`${i+1}. ${q.choices[q.correct]} — ${q.exp}`).join("<br>");
+}
+
+function checkC() {
+  let score = 0;
+  scenarios.forEach((q, i) => {
+    document.querySelectorAll(`input[name="sc${i}"]`).forEach(inp => {
+      const lab = inp.closest("label");
+      lab.classList.remove("correct","wrong");
+      if (Number(inp.value) === q.correct) lab.classList.add("correct");
+      if (inp.checked && Number(inp.value) !== q.correct) lab.classList.add("wrong");
+    });
+    const checked = document.querySelector(`input[name="sc${i}"]:checked`);
+    const fb = document.getElementById("fb" + i);
+    fb.style.display = "block";
+    if (checked && Number(checked.value) === q.correct) {
+      score++;
+      fb.className = "fb ok";
+      fb.textContent = "Σωστό! " + q.exp;
+    } else {
+      fb.className = "fb bad";
+      fb.textContent = "Θέλει διόρθωση. " + q.exp;
+    }
+  });
+  const r = document.getElementById("resC");
+  r.style.display = "block";
+  r.className = "res " + (score >= 6 ? "ok" : "bad");
+  r.textContent = `Σκορ: ${score}/${scenarios.length}`;
+}
+
+function resetC() {
+  document.querySelectorAll("#scenarios input").forEach(i => i.checked = false);
+  document.querySelectorAll("#scenarios label").forEach(l => l.classList.remove("correct","wrong"));
+  document.querySelectorAll(".fb").forEach(f => f.style.display = "none");
+  document.getElementById("resC").style.display = "none";
+}
+
+renderA();
+renderDrag();
+setupDrop();
+renderC();
+</script>
+</body>
+</html>
