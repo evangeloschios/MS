@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Κουίζ 1.1.1 - 1.1.2 | Μετασχηματιστές</title>
+  <style>
+    :root{
+      --blue:#1d4ed8;
+      --blueDark:#0f3b82;
+      --blueLight:#e8f0ff;
+      --green:#15803d;
+      --greenLight:#e9f8ef;
+      --red:#b91c1c;
+      --redLight:#fff0f0;
+      --orange:#f97316;
+      --orangeLight:#fff7ed;
+      --gray:#f8fafc;
+      --dark:#1f2937;
+      --muted:#64748b;
+      --border:#d1d5db;
+      --shadow:0 7px 20px rgba(15,23,42,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Segoe UI", Tahoma, Arial, sans-serif;
+      background:linear-gradient(180deg,#ecf5ff 0%,#ffffff 100%);
+      color:var(--dark);
+      line-height:1.55;
+    }
+    header{
+      background:linear-gradient(135deg,#0f3b82,#2563eb);
+      color:white;
+      text-align:center;
+      padding:30px 18px;
+      box-shadow:var(--shadow);
+    }
+    header h1{margin:0 0 8px;font-size:clamp(1.35rem,3vw,2.2rem)}
+    header p{margin:4px auto;max-width:980px;opacity:.95}
+    .wrap{max-width:1120px;margin:24px auto;padding:0 16px 46px}
+    .toc{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:14px;
+      margin-bottom:22px;
+    }
+    .toc a{
+      display:block;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:15px 16px;
+      text-decoration:none;
+      color:var(--dark);
+      box-shadow:var(--shadow);
+    }
+    .toc a:hover{transform:translateY(-1px);border-color:#93c5fd}
+    .card{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:22px;
+      margin:20px 0;
+      box-shadow:var(--shadow);
+    }
+    h2{
+      margin:0 0 8px;
+      color:var(--blueDark);
+      border-left:6px solid var(--blue);
+      padding-left:12px;
+    }
+    .note{
+      background:var(--blueLight);
+      border-left:5px solid var(--blue);
+      padding:12px 14px;
+      border-radius:12px;
+      margin:14px 0 18px;
+    }
+    .question{
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      padding:15px;
+      margin:14px 0;
+      background:#fbfdff;
+    }
+    .question p{margin:0 0 10px;font-weight:650}
+    label.option{
+      display:block;
+      padding:8px 10px;
+      margin:6px 0;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    label.option:hover{border-color:#93c5fd;background:#f8fbff}
+    input[type="radio"]{margin-right:8px}
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    button{
+      border:0;
+      background:var(--blue);
+      color:#fff;
+      padding:10px 16px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:1rem;
+      font-weight:650;
+      box-shadow:0 4px 12px rgba(37,99,235,.22);
+    }
+    button.secondary{background:#475569;box-shadow:none}
+    button.orange{background:var(--orange);box-shadow:none}
+    button:hover{filter:brightness(.96)}
+    .result{
+      display:none;
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:12px;
+      font-weight:700;
+    }
+    .ok{background:var(--greenLight);color:var(--green);border:1px solid #a7f3d0}
+    .bad{background:var(--redLight);color:var(--red);border:1px solid #fecaca}
+    .answerKey{
+      display:none;
+      background:var(--orangeLight);
+      border:1px solid #fed7aa;
+      border-left:5px solid var(--orange);
+      padding:12px 14px;
+      border-radius:12px;
+      margin-top:12px;
+    }
+    .correctChoice{background:var(--greenLight)!important;border-color:#86efac!important}
+    .wrongChoice{background:var(--redLight)!important;border-color:#fecaca!important}
+    .dragArea{display:grid;grid-template-columns:1fr;gap:18px}
+    .cardsBank, .dropGrid{
+      border:1px dashed #cbd5e1;
+      border-radius:16px;
+      padding:14px;
+      background:#f8fafc;
+      touch-action:manipulation;
+    }
+    .cardsBank h3,.dropGrid h3{margin-top:0}
+    .chips{display:flex;flex-wrap:wrap;gap:10px;min-height:54px}
+    .chip{
+      background:#fff;
+      border:1px solid #cbd5e1;
+      border-radius:999px;
+      padding:9px 12px;
+      cursor:grab;
+      user-select:none;
+      box-shadow:0 2px 7px rgba(0,0,0,.05);
+      max-width:100%;
+    }
+    .chip:active{cursor:grabbing}
+    .chip.selected{outline:3px solid #fbbf24;background:#fffbeb}
+    .dropGrid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(245px,1fr));
+      gap:12px;
+    }
+    .dropZone{
+      background:#fff;
+      border:2px dashed #cbd5e1;
+      border-radius:16px;
+      padding:12px;
+      min-height:180px;
+      touch-action:manipulation;
+    }
+    .dropZone.over{background:#eef6ff;border-color:#60a5fa}
+    .dropZone h4{margin:0 0 8px;color:var(--blueDark);font-size:1rem}
+    .dropZone .chips{display:block;min-height:110px}
+    .dropZone .chip{display:block;border-radius:12px;margin:7px 0;cursor:grab}
+    .chip.good{background:var(--greenLight);border-color:#86efac}
+    .chip.miss{background:var(--redLight);border-color:#fecaca}
+    .applications{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+      gap:14px;
+    }
+    .scenario{
+      border:1px solid #e5e7eb;
+      border-radius:16px;
+      background:#fbfdff;
+      padding:15px;
+      display:flex;
+      flex-direction:column;
+      min-height:305px;
+    }
+    .scenario p{margin:0 0 10px}
+    .scenario .choices label{
+      display:block;
+      padding:8px 10px;
+      margin:7px 0;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    .feedback{
+      display:none;
+      margin-top:auto;
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:650;
+    }
+    .small{font-size:.94rem;color:var(--muted)}
+    footer{
+      text-align:center;
+      color:var(--muted);
+      padding:20px 10px 36px;
+      font-size:.92rem;
+    }
+    @media print{
+      body{background:#fff}
+      header,.toc,.btnrow,footer{display:none}
+      .card{box-shadow:none;break-inside:avoid}
+      .answerKey{display:block}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Κουίζ: Μετασχηματιστές — Παρ. 1.1.1 και 1.1.2</h1>
+  <p>Σύντομη ιστορική ανασκόπηση, σημασία των Μ/Σ, είδη και χρήσεις μετασχηματιστών. Δεν περιλαμβάνονται ερωτήσεις για αρχή λειτουργίας, τύπους σπειρών ή τάση βραχυκύκλωσης.</p>
+</header>
+
+<div class="wrap">
+  <nav class="toc">
+    <a href="#partA"><strong>Μέρος Α</strong><br>Θεωρία 1.1.1 — Σωστό/Λάθος και πολλαπλής επιλογής</a>
+    <a href="#partB"><strong>Μέρος Β</strong><br>Drag & Drop — Είδη Μ/Σ</a>
+    <a href="#partC"><strong>Μέρος Γ</strong><br>Σενάρια χρήσης Μ/Σ</a>
+  </nav>
+
+  <section class="card" id="partA">
+    <h2>Μέρος Α — Θεωρία 1.1.1</h2>
+    <div class="note">
+      Επίλεξε μία απάντηση σε κάθε ερώτηση. Στο τέλος πάτησε <strong>Έλεγχος απαντήσεων</strong>.
+    </div>
+    <div id="quizA"></div>
+    <div class="btnrow">
+      <button onclick="checkPartA()">Έλεγχος απαντήσεων</button>
+      <button class="secondary" onclick="resetPartA()">Καθαρισμός</button>
+      <button class="orange" onclick="toggleKey('keyA')">Εμφάνιση/Απόκρυψη λύσεων</button>
+    </div>
+    <div class="result" id="resultA"></div>
+    <div class="answerKey" id="keyA"></div>
+  </section>
+
+  <section class="card" id="partB">
+    <h2>Μέρος Β — Drag & Drop: Είδη Μ/Σ</h2>
+    <div class="note">
+      Σύρε κάθε καρτέλα στη σωστή κατηγορία. Σε κινητό ή tablet μπορείς να πατήσεις μία καρτέλα και μετά το πλαίσιο της κατηγορίας.
+    </div>
+    <p class="small">Μπορείς να αφήνεις την καρτέλα οπουδήποτε μέσα στο πλαίσιο της κατηγορίας.</p>
+
+    <div class="dragArea">
+      <div class="cardsBank">
+        <h3>Καρτέλες</h3>
+        <div class="chips" id="bank"></div>
+      </div>
+
+      <div class="dropGrid" id="dropGrid">
+        <div class="dropZone" data-zone="network">
+          <h4>Α. Ανάλογα με το είδος δικτύου</h4>
+          <div class="chips"></div>
+        </div>
+        <div class="dropZone" data-zone="power">
+          <h4>Β. Ανάλογα με την ισχύ / χρήση</h4>
+          <div class="chips"></div>
+        </div>
+        <div class="dropZone" data-zone="cooling">
+          <h4>Γ. Ανάλογα με τον τρόπο ψύξης</h4>
+          <div class="chips"></div>
+        </div>
+        <div class="dropZone" data-zone="place">
+          <h4>Δ. Ανάλογα με τον χώρο εγκατάστασης</h4>
+          <div class="chips"></div>
+        </div>
+        <div class="dropZone" data-zone="special">
+          <h4>Ε. Ειδική κατασκευή / χρήση</h4>
+          <div class="chips"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button onclick="checkDrag()">Έλεγχος ταξινόμησης</button>
+      <button class="secondary" onclick="resetDrag()">Ανακάτεμα ξανά</button>
+      <button class="orange" onclick="toggleKey('keyB')">Εμφάνιση/Απόκρυψη λύσεων</button>
+    </div>
+    <div class="result" id="resultB"></div>
+    <div class="answerKey" id="keyB"></div>
+  </section>
+
+  <section class="card" id="partC">
+    <h2>Μέρος Γ — Σενάρια χρήσης Μ/Σ</h2>
+    <div class="note">
+      Διάβασε κάθε μικρό σενάριο και επίλεξε την καταλληλότερη απάντηση.
+    </div>
+    <div class="applications" id="scenarios"></div>
+    <div class="btnrow">
+      <button onclick="checkPartC()">Έλεγχος σεναρίων</button>
+      <button class="secondary" onclick="resetPartC()">Καθαρισμός</button>
+      <button class="orange" onclick="toggleKey('keyC')">Εμφάνιση/Απόκρυψη λύσεων</button>
+    </div>
+    <div class="result" id="resultC"></div>
+    <div class="answerKey" id="keyC"></div>
+  </section>
+</div>
+
+<footer>
+  Κουίζ για εκπαιδευτική χρήση — Κεφάλαιο 1.1.1 και 1.1.2, Μετασχηματιστές.
+</footer>
+
+<script>
+const questionsA = [
+  {
+    q:"1. Η ανάγκη μετασχηματισμού των ηλεκτρικών μεγεθών φάνηκε με την ανάπτυξη των πρώτων συστημάτων ηλεκτρικής ενέργειας συνεχούς ρεύματος.",
+    choices:["Λάθος","Σωστό"],
+    correct:1,
+    exp:"Σωστό. Το βιβλίο συνδέει την ανάγκη μετασχηματισμού με τα πρώτα συστήματα συνεχούς ρεύματος."
+  },
+  {
+    q:"2. Στα πρώτα συστήματα συνεχούς ρεύματος, η μεταβολή της τάσης γινόταν με:",
+    choices:["ζεύγος κινητήρα-γεννήτριας","μετασχηματιστή Ε.Ρ.","ασφάλεια τήξης","πυκνωτή"],
+    correct:0,
+    exp:"Η μεταβολή της τάσης του Σ.Ρ. γινόταν με ζεύγος κινητήρα-γεννήτριας, με μικρό βαθμό απόδοσης."
+  },
+  {
+    q:"3. Το εναλλασσόμενο ρεύμα επικράτησε κυρίως επειδή:",
+    choices:["δεν χρειάζεται αγωγούς","μετασχηματίζεται εύκολα, γρήγορα και οικονομικά","δεν έχει απώλειες ποτέ","λειτουργεί μόνο σε χαμηλή τάση"],
+    correct:1,
+    exp:"Το βασικό πλεονέκτημα ήταν ότι μετασχηματίζεται εύκολα, γρήγορα και οικονομικά με Μ/Σ."
+  },
+  {
+    q:"4. Οι μετασχηματιστές λέγονται και στατοί μετασχηματιστές επειδή:",
+    choices:["λειτουργούν μόνο σε στάση φορτίου","δεν έχουν κινούμενα μέρη","έχουν μόνο ένα τύλιγμα","χρησιμοποιούνται μόνο σε σταθμούς παραγωγής"],
+    correct:1,
+    exp:"Κύριο χαρακτηριστικό τους είναι ότι δεν έχουν κινούμενα μέρη."
+  },
+  {
+    q:"5. Με τους Μ/Σ η ανύψωση ή ο υποβιβασμός της τάσης του Ε.Ρ. γίνεται με μεγάλες απώλειες.",
+    choices:["Σωστό","Λάθος"],
+    correct:1,
+    exp:"Λάθος. Το βιβλίο αναφέρει ότι η μεταβολή τάσης γίνεται με ελάχιστες απώλειες."
+  },
+  {
+    q:"6. Οι Μ/Σ βοήθησαν στην εξάπλωση των συστημάτων ηλεκτρικής ενέργειας Ε.Ρ.",
+    choices:["Σωστό","Λάθος"],
+    correct:0,
+    exp:"Σωστό. Η χρήση των Μ/Σ συνέβαλε στη ραγδαία εξέλιξη και εξάπλωση των συστημάτων Ε.Ρ."
+  },
+  {
+    q:"7. Το συνεχές ρεύμα σήμερα χρησιμοποιείται:",
+    choices:["σε όλα τα δίκτυα κατανάλωσης χωρίς εξαίρεση","μόνο σε ηλεκτρικά κουδούνια","σε ειδικές εφαρμογές και ιδιαίτερες περιπτώσεις","μόνο σε μετασχηματιστές λαδιού"],
+    correct:2,
+    exp:"Το βιβλίο αναφέρει ότι το Σ.Ρ. χρησιμοποιείται σε ειδικές εφαρμογές και ιδιαίτερες περιπτώσεις."
+  },
+  {
+    q:"8. Όπου χρειαζόμαστε διαφορετική τάση ή ένταση ρεύματος, ο Μ/Σ δίνει απλή και οικονομική λύση.",
+    choices:["Λάθος","Σωστό"],
+    correct:1,
+    exp:"Σωστό. Αυτό τονίζεται στη σημασία των Μ/Σ στη σύγχρονη ζωή."
+  },
+  {
+    q:"9. Οι πρώτοι Μ/Σ αναπτύχθηκαν επειδή η μεταφορά της ηλεκτρικής ενέργειας γινόταν οικονομικότερα σε:",
+    choices:["μηδενική τάση","πολύ χαμηλότερη τάση από της κατανάλωσης","πολύ υψηλότερη τάση από της κατανάλωσης","μόνο συνεχή τάση 12 V"],
+    correct:2,
+    exp:"Για οικονομική μεταφορά απαιτήθηκε πολύ υψηλότερη τάση από αυτή της κατανάλωσης."
+  },
+  {
+    q:"10. Οι Μ/Σ χρησιμοποιούνται μόνο στα εργοστάσια και όχι σε σπίτια ή ηλεκτρονικές συσκευές.",
+    choices:["Σωστό","Λάθος"],
+    correct:1,
+    exp:"Λάθος. Το βιβλίο αναφέρει χρήσεις από τη βαριά βιομηχανία μέχρι το σπίτι, το γραφείο και τις τηλεπικοινωνίες."
+  }
+];
+
+const dragItems = [
+  {text:"Μονοφασικοί Μ/Σ", zone:"network"},
+  {text:"Τριφασικοί Μ/Σ", zone:"network"},
+  {text:"Μ/Σ ισχύος", zone:"power"},
+  {text:"Μ/Σ οργάνων μέτρησης", zone:"power"},
+  {text:"Ξηροί Μ/Σ", zone:"cooling"},
+  {text:"Μ/Σ λαδιού", zone:"cooling"},
+  {text:"Μ/Σ υπαίθρου", zone:"place"},
+  {text:"Μ/Σ κλειστού χώρου", zone:"place"},
+  {text:"Μ/Σ ηλεκτροσυγκόλλησης", zone:"special"},
+  {text:"Μ/Σ 1:1", zone:"special"},
+  {text:"Μ/Σ έλξης", zone:"special"},
+  {text:"Αυτομετασχηματιστής", zone:"special"}
+];
+
+const scenarios = [
+  {
+    q:"1. Θέλουμε να χρησιμοποιήσουμε Μ/Σ σε τριφασικό δίκτυο βιομηχανικής εγκατάστασης. Ποια κατηγορία ταιριάζει περισσότερο;",
+    choices:["Μονοφασικός Μ/Σ","Τριφασικός Μ/Σ","Μ/Σ κουδουνιού","Μ/Σ κλειστού χώρου μόνο"],
+    correct:1,
+    exp:"Για τριφασικά δίκτυα χρησιμοποιούνται τριφασικοί Μ/Σ."
+  },
+  {
+    q:"2. Θέλουμε Μ/Σ για μεταφορά ή διανομή μεγάλης ποσότητας ηλεκτρικής ισχύος. Ποια επιλογή είναι σωστή;",
+    choices:["Μ/Σ ισχύος","Μ/Σ οργάνων μέτρησης","Μ/Σ κουδουνιού","Μ/Σ ηλεκτρονικού υπολογιστή μόνο"],
+    correct:0,
+    exp:"Οι Μ/Σ ισχύος προορίζονται για μεταφορά μεγάλων ποσοτήτων ηλεκτρικής ισχύος."
+  },
+  {
+    q:"3. Θέλουμε Μ/Σ για μέτρηση τάσης ή έντασης σε ηλεκτρικό πίνακα, με γνωστό λόγο μετασχηματισμού. Ποια κατηγορία ταιριάζει;",
+    choices:["Μ/Σ λαδιού","Μ/Σ οργάνων μέτρησης","Μ/Σ υπαίθρου","Μ/Σ ηλεκτρικής έλξης"],
+    correct:1,
+    exp:"Οι Μ/Σ οργάνων μέτρησης χρησιμοποιούνται για τη μέτρηση τάσης ή έντασης με γνωστό λόγο."
+  },
+  {
+    q:"4. Ένας μικρός Μ/Σ σε ηλεκτρικό κουδούνι σπιτιού ανήκει κυρίως σε εφαρμογές:",
+    choices:["οικιακές εφαρμογές","σταθμών παραγωγής μόνο","ηλεκτρικής έλξης μόνο","βαριάς βιομηχανίας μόνο"],
+    correct:0,
+    exp:"Το βιβλίο αναφέρει το ηλεκτρικό κουδούνι ως παράδειγμα χρήσης Μ/Σ στο σπίτι."
+  },
+  {
+    q:"5. Ένας Μ/Σ που ψύχεται απευθείας από τον αέρα χαρακτηρίζεται γενικά ως:",
+    choices:["λαδιού","ξηρός","οργάνων μέτρησης","υπαίθρου"],
+    correct:1,
+    exp:"Οι ξηροί Μ/Σ ψύχονται απευθείας από τον αέρα."
+  },
+  {
+    q:"6. Ένας Μ/Σ που τοποθετείται έξω, σε εξωτερικό περιβάλλον, μπορεί να ταξινομηθεί ως:",
+    choices:["Μ/Σ κλειστού χώρου","Μ/Σ 1:1","Μ/Σ υπαίθρου","Μ/Σ οργάνων μέτρησης"],
+    correct:2,
+    exp:"Με βάση τον χώρο εγκατάστασης, υπάρχει διάκριση σε Μ/Σ υπαίθρου και κλειστού χώρου."
+  },
+  {
+    q:"7. Σε ηλεκτροσυγκόλληση χρησιμοποιείται ειδικός μετασχηματιστής.",
+    choices:["Λάθος","Σωστό"],
+    correct:1,
+    exp:"Οι ηλεκτροσυγκολλήσεις αναφέρονται ως εφαρμογή Μ/Σ."
+  },
+  {
+    q:"8. Θέλουμε να συνδέσουμε μια ηλεκτρονική συσκευή ή τροφοδοτικό. Ποιος τομέας χρήσης ταιριάζει περισσότερο;",
+    choices:["ηλεκτρονικές / οικιακές εφαρμογές","μόνο υδροστρόβιλοι","μόνο Μ/Σ υπαίθρου υψηλής ισχύος","μόνο δίκτυα Σ.Ρ."],
+    correct:0,
+    exp:"Το βιβλίο αναφέρει ηλεκτρονικές συσκευές, γραφείο, σπίτι και τηλεπικοινωνίες ως πεδία χρήσης Μ/Σ."
+  }
+];
+
+function shuffle(array){
+  const a=[...array];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function renderPartA(){
+  const box=document.getElementById("quizA");
+  box.innerHTML="";
+  questionsA.forEach((item,idx)=>{
+    const q=document.createElement("div");
+    q.className="question";
+    let html=`<p>${item.q}</p>`;
+    item.choices.forEach((choice,cidx)=>{
+      html+=`<label class="option"><input type="radio" name="qa${idx}" value="${cidx}">${choice}</label>`;
+    });
+    q.innerHTML=html;
+    box.appendChild(q);
+  });
+  document.getElementById("keyA").innerHTML="<strong>Λύσεις Μέρους Α:</strong><br>" + questionsA.map((q,i)=>`${i+1}. ${q.choices[q.correct]} — ${q.exp}`).join("<br>");
+}
+
+function checkPartA(){
+  let score=0;
+  questionsA.forEach((q,i)=>{
+    const labels=document.querySelectorAll(`input[name="qa${i}"]`);
+    labels.forEach(input=>{
+      const lab=input.closest("label");
+      lab.classList.remove("correctChoice","wrongChoice");
+      if(Number(input.value)===q.correct) lab.classList.add("correctChoice");
+      if(input.checked && Number(input.value)!==q.correct) lab.classList.add("wrongChoice");
+    });
+    const checked=document.querySelector(`input[name="qa${i}"]:checked`);
+    if(checked && Number(checked.value)===q.correct) score++;
+  });
+  const res=document.getElementById("resultA");
+  res.style.display="block";
+  res.className="result " + (score>=8 ? "ok" : "bad");
+  res.textContent=`Σκορ Μέρους Α: ${score}/${questionsA.length}`;
+}
+
+function resetPartA(){
+  document.querySelectorAll("#quizA input").forEach(i=>i.checked=false);
+  document.querySelectorAll("#quizA label").forEach(l=>l.classList.remove("correctChoice","wrongChoice"));
+  document.getElementById("resultA").style.display="none";
+}
+
+let selectedChip=null;
+
+function renderDrag(){
+  const bank=document.getElementById("bank");
+  bank.innerHTML="";
+  document.querySelectorAll(".dropZone .chips").forEach(z=>z.innerHTML="");
+  shuffle(dragItems).forEach((item,idx)=>{
+    const chip=document.createElement("div");
+    chip.className="chip";
+    chip.draggable=true;
+    chip.textContent=item.text;
+    chip.dataset.correctZone=item.zone;
+    chip.id="chip"+idx+"_"+Math.random().toString(16).slice(2);
+    addChipEvents(chip);
+    bank.appendChild(chip);
+  });
+  document.getElementById("resultB").style.display="none";
+  document.getElementById("keyB").innerHTML = `
+    <strong>Λύσεις Μέρους Β:</strong>
+    <ul>
+      <li><strong>Είδος δικτύου:</strong> Μονοφασικοί, Τριφασικοί.</li>
+      <li><strong>Ισχύς / χρήση:</strong> Μ/Σ ισχύος, Μ/Σ οργάνων μέτρησης.</li>
+      <li><strong>Τρόπος ψύξης:</strong> Ξηροί, Λαδιού.</li>
+      <li><strong>Χώρος εγκατάστασης:</strong> Υπαίθρου, Κλειστού χώρου.</li>
+      <li><strong>Ειδική κατασκευή / χρήση:</strong> Μ/Σ ηλεκτροσυγκόλλησης, Μ/Σ 1:1, Μ/Σ έλξης, Αυτομετασχηματιστής.</li>
+    </ul>`;
+}
+
+function addChipEvents(chip){
+  chip.addEventListener("dragstart",e=>{e.dataTransfer.setData("text/plain",chip.id);});
+  chip.addEventListener("click",()=>{
+    if(selectedChip) selectedChip.classList.remove("selected");
+    selectedChip = chip;
+    chip.classList.add("selected");
+  });
+}
+
+function moveSelectedTo(targetContainer){
+  if(selectedChip && targetContainer && targetContainer !== selectedChip.parentElement){
+    targetContainer.appendChild(selectedChip);
+    selectedChip.classList.remove("selected");
+    selectedChip=null;
+  }
+}
+
+function setupDropZones(){
+  const bankList = document.getElementById("bank");
+  const bankBox = document.querySelector(".cardsBank");
+  const zones = document.querySelectorAll(".dropZone");
+
+  function enableTarget(targetElement, listElement){
+    targetElement.addEventListener("dragover", e => {
+      e.preventDefault();
+      const z = targetElement.closest(".dropZone");
+      if(z) z.classList.add("over");
+    });
+
+    targetElement.addEventListener("dragleave", e => {
+      const z = targetElement.closest(".dropZone");
+      if(z && !z.contains(e.relatedTarget)) z.classList.remove("over");
+    });
+
+    targetElement.addEventListener("drop", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = e.dataTransfer.getData("text/plain");
+      const chip = document.getElementById(id);
+      if(chip) listElement.appendChild(chip);
+      const z = targetElement.closest(".dropZone");
+      if(z) z.classList.remove("over");
+    });
+
+    targetElement.addEventListener("click", e => {
+      if(e.target.classList && e.target.classList.contains("chip")) return;
+      moveSelectedTo(listElement);
+    });
+  }
+
+  enableTarget(bankBox, bankList);
+  zones.forEach(zone => {
+    const list = zone.querySelector(".chips");
+    enableTarget(zone, list);
+    enableTarget(list, list);
+  });
+}
+
+function checkDrag(){
+  let total=dragItems.length, score=0;
+  document.querySelectorAll(".chip").forEach(chip=>{
+    chip.classList.remove("good","miss");
+    const parentZone=chip.closest(".dropZone");
+    if(!parentZone){
+      chip.classList.add("miss");
+      return;
+    }
+    if(parentZone.dataset.zone === chip.dataset.correctZone){
+      chip.classList.add("good");
+      score++;
+    } else {
+      chip.classList.add("miss");
+    }
+  });
+  const res=document.getElementById("resultB");
+  res.style.display="block";
+  res.className="result " + (score>=10 ? "ok" : "bad");
+  res.textContent=`Σκορ Μέρους Β: ${score}/${total}`;
+}
+
+function resetDrag(){
+  renderDrag();
+}
+
+function renderPartC(){
+  const box=document.getElementById("scenarios");
+  box.innerHTML="";
+  scenarios.forEach((s,idx)=>{
+    const div=document.createElement("div");
+    div.className="scenario";
+    let html=`<p><strong>${s.q}</strong></p><div class="choices">`;
+    s.choices.forEach((c,cidx)=>{
+      html+=`<label><input type="radio" name="sc${idx}" value="${cidx}"> ${c}</label>`;
+    });
+    html+=`</div><div class="feedback" id="fb${idx}"></div>`;
+    div.innerHTML=html;
+    box.appendChild(div);
+  });
+  document.getElementById("keyC").innerHTML="<strong>Λύσεις Μέρους Γ:</strong><br>" + scenarios.map((s,i)=>`${i+1}. ${s.choices[s.correct]} — ${s.exp}`).join("<br>");
+}
+
+function checkPartC(){
+  let score=0;
+  scenarios.forEach((s,i)=>{
+    const inputs=document.querySelectorAll(`input[name="sc${i}"]`);
+    inputs.forEach(inp=>{
+      const lab=inp.closest("label");
+      lab.classList.remove("correctChoice","wrongChoice");
+      if(Number(inp.value)===s.correct) lab.classList.add("correctChoice");
+      if(inp.checked && Number(inp.value)!==s.correct) lab.classList.add("wrongChoice");
+    });
+    const checked=document.querySelector(`input[name="sc${i}"]:checked`);
+    const fb=document.getElementById("fb"+i);
+    fb.style.display="block";
+    if(checked && Number(checked.value)===s.correct){
+      score++;
+      fb.className="feedback ok";
+      fb.textContent="Σωστό! " + s.exp;
+    }else{
+      fb.className="feedback bad";
+      fb.textContent="Θέλει διόρθωση. " + s.exp;
+    }
+  });
+  const res=document.getElementById("resultC");
+  res.style.display="block";
+  res.className="result " + (score>=6 ? "ok" : "bad");
+  res.textContent=`Σκορ Μέρους Γ: ${score}/${scenarios.length}`;
+}
+
+function resetPartC(){
+  document.querySelectorAll("#scenarios input").forEach(i=>i.checked=false);
+  document.querySelectorAll("#scenarios label").forEach(l=>l.classList.remove("correctChoice","wrongChoice"));
+  document.querySelectorAll(".feedback").forEach(f=>f.style.display="none");
+  document.getElementById("resultC").style.display="none";
+}
+
+function toggleKey(id){
+  const el=document.getElementById(id);
+  el.style.display = el.style.display==="block" ? "none" : "block";
+}
+
+renderPartA();
+renderDrag();
+setupDropZones();
+renderPartC();
+</script>
+</body>
+</html>

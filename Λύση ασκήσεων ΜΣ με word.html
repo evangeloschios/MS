@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Προσομοίωση Μετασχηματιστών</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f4f4f8;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 20px 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .description {
+      font-size: 0.9rem;
+      color: #444;
+      margin-bottom: 15px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      border-bottom: 2px solid #ddd;
+    }
+    td.label {
+      text-align: left;
+      font-weight: bold;
+      width: 18%;
+    }
+    input[type="number"] {
+      width: 95%;
+      padding: 4px 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .header-row {
+      background: #f0f0ff;
+    }
+    .col-title {
+      font-weight: bold;
+    }
+    .controls {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    #calcBtn {
+      background: #0077ff;
+      color: white;
+    }
+    #clearBtn {
+      background: #e0e0e0;
+    }
+    #solutionBtn {
+      background: #28a745;
+      color: #ffffff;
+    }
+    .note {
+      font-size: 0.8rem;
+      color: #555;
+      margin-top: 8px;
+    }
+    .error {
+      color: #b00020;
+      margin-top: 6px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Προσομοίωση Μετασχηματιστών</h1>
+    <p class="description">
+      Συμπλήρωσε τα <b>δεδομένα</b> στην αριστερή στήλη. Πατάς «Υπολογισμός» και η δεξιά στήλη
+      συμπληρώνεται αυτόματα με τα υπόλοιπα στοιχεία, με βάση τις σχέσεις ενός ιδανικού μετασχηματιστή.
+    </p>
+
+    <table>
+      <tr class="header-row">
+        <th>Μέγεθος</th>
+        <th class="col-title">Στήλη 1 – Δεδομένα</th>
+        <th class="col-title">Στήλη 2 – Υπολογισμένα</th>
+      </tr>
+
+      <!-- K -->
+      <tr>
+        <td class="label">K (Σχέση Μεταφοράς)</td>
+        <td><input type="number" id="K1" step="any" placeholder="π.χ. 10"></td>
+        <td><input type="number" id="K2" step="any" readonly></td>
+      </tr>
+
+      <!-- U1 -->
+      <tr>
+        <td class="label">U1 (Τάση Πρωτεύοντος) [V]</td>
+        <td><input type="number" id="U1_1" step="any" placeholder="π.χ. 230"></td>
+        <td><input type="number" id="U1_2" step="any" readonly></td>
+      </tr>
+
+      <!-- U2 -->
+      <tr>
+        <td class="label">U2 (Τάση Δευτερεύοντος) [V]</td>
+        <td><input type="number" id="U2_1" step="any" placeholder="π.χ. 23"></td>
+        <td><input type="number" id="U2_2" step="any" readonly></td>
+      </tr>
+
+      <!-- W1 -->
+      <tr>
+        <td class="label">W1 (Σπείρες Πρωτεύοντος)</td>
+        <td><input type="number" id="W1_1" step="any" placeholder="π.χ. 1000"></td>
+        <td><input type="number" id="W1_2" step="any" readonly></td>
+      </tr>
+
+      <!-- W2 -->
+      <tr>
+        <td class="label">W2 (Σπείρες Δευτερεύοντος)</td>
+        <td><input type="number" id="W2_1" step="any" placeholder="π.χ. 100"></td>
+        <td><input type="number" id="W2_2" step="any" readonly></td>
+      </tr>
+
+      <!-- I1 -->
+      <tr>
+        <td class="label">I1 (Ρεύμα Πρωτεύοντος) [A]</td>
+        <td><input type="number" id="I1_1" step="any" placeholder="π.χ. 1.5"></td>
+        <td><input type="number" id="I1_2" step="any" readonly></td>
+      </tr>
+
+      <!-- I2 -->
+      <tr>
+        <td class="label">I2 (Ρεύμα Δευτερεύοντος) [A]</td>
+        <td><input type="number" id="I2_1" step="any" placeholder="π.χ. 15"></td>
+        <td><input type="number" id="I2_2" step="any" readonly></td>
+      </tr>
+
+      <!-- P1 -->
+      <tr>
+        <td class="label">P1 (Πραγματική Ισχύς Πρωτεύοντος) [W]</td>
+        <td><input type="number" id="P1_1" step="any" placeholder="π.χ. 300"></td>
+        <td><input type="number" id="P1_2" step="any" readonly></td>
+      </tr>
+
+      <!-- P2 -->
+      <tr>
+        <td class="label">P2 (Πραγματική Ισχύς Δευτερεύοντος) [W]</td>
+        <td><input type="number" id="P2_1" step="any" placeholder="π.χ. 300"></td>
+        <td><input type="number" id="P2_2" step="any" readonly></td>
+      </tr>
+
+      <!-- Ps1 -->
+      <tr>
+        <td class="label">Ps1 (Φαινόμενη Ισχύς Πρωτεύοντος) [VA]</td>
+        <td><input type="number" id="Ps1_1" step="any" placeholder="π.χ. 350"></td>
+        <td><input type="number" id="Ps1_2" step="any" readonly></td>
+      </tr>
+
+      <!-- Ps2 -->
+      <tr>
+        <td class="label">Ps2 (Φαινόμενη Ισχύς Δευτερεύοντος) [VA]</td>
+        <td><input type="number" id="Ps2_1" step="any" placeholder="π.χ. 350"></td>
+        <td><input type="number" id="Ps2_2" step="any" readonly></td>
+      </tr>
+
+      <!-- Pb1 -->
+      <tr>
+        <td class="label">Pb1 (Άεργος Ισχύς Πρωτεύοντος) [var]</td>
+        <td><input type="number" id="Pb1_1" step="any" placeholder="(αν είναι γνωστή)"></td>
+        <td><input type="number" id="Pb1_2" step="any" readonly></td>
+      </tr>
+
+      <!-- Pb2 -->
+      <tr>
+        <td class="label">Pb2 (Άεργος Ισχύς Δευτερεύοντος) [var]</td>
+        <td><input type="number" id="Pb2_1" step="any" placeholder="(αν είναι γνωστή)"></td>
+        <td><input type="number" id="Pb2_2" step="any" readonly></td>
+      </tr>
+
+      <!-- cosφ -->
+      <tr>
+        <td class="label">συνφ (Power Factor)</td>
+        <td><input type="number" id="cosfi1" step="any" placeholder="π.χ. 0.8"></td>
+        <td><input type="number" id="cosfi2" step="any" readonly></td>
+      </tr>
+
+      <!-- Z -->
+      <tr>
+        <td class="label">Z (Φορτίο) [Ω]</td>
+        <td><input type="number" id="Z1" step="any" placeholder="π.χ. 10"></td>
+        <td><input type="number" id="Z2" step="any" readonly></td>
+      </tr>
+    </table>
+
+    <div class="controls">
+      <button id="calcBtn">Υπολογισμός</button>
+      <button id="clearBtn">Καθαρισμός</button>
+      <button id="solutionBtn">Λύση (Word)</button>
+    </div>
+    <div id="error" class="error"></div>
+    <p class="note">
+      Βασικές σχέσεις που χρησιμοποιούνται:
+      <br>• K = U1 / U2 = W1 / W2 = I2 / I1 (ιδανικός μετασχηματιστής)
+      <br>• Ps1 = U1 · I1 , Ps2 = U2 · I2
+      <br>• P1 = U1 · I1 · συνφ , P2 = U2 · I2 · συνφ
+      <br>• Pb1 = U1 · I1 · ημφ , Pb2 = U2 · I2 · ημφ
+      <br>• Z = U2 / I2 (μέτρο σύνθετης αντίστασης φορτίου)
+      <br>• Για ιδανικό μετασχηματιστή: Ps1 ≈ Ps2, P1 ≈ P2, Pb1 ≈ Pb2
+    </p>
+  </div>
+
+  <script>
+    // Βοηθητικές για αριθμητικές τιμές & αυτόματο γέμισμα
+    function toNum(value) {
+      const v = parseFloat(value);
+      return isNaN(v) ? null : v;
+    }
+
+    function setIfEmpty(id, value) {
+      const el = document.getElementById(id);
+      if (el && (el.value === "" || el.value === null)) {
+        if (value !== null && value !== undefined && !Number.isNaN(value)) {
+          el.value = value.toFixed(4).replace(/\.?0+$/,"");
+        }
+      }
+    }
+
+    // Υπολογισμός ιδανικού μετασχηματιστή
+    document.getElementById("calcBtn").addEventListener("click", function () {
+      document.getElementById("error").textContent = "";
+
+      let K  = toNum(document.getElementById("K1").value);
+      let U1 = toNum(document.getElementById("U1_1").value);
+      let U2 = toNum(document.getElementById("U2_1").value);
+      let W1 = toNum(document.getElementById("W1_1").value);
+      let W2 = toNum(document.getElementById("W2_1").value);
+      let I1 = toNum(document.getElementById("I1_1").value);
+      let I2 = toNum(document.getElementById("I2_1").value);
+
+      let P1  = toNum(document.getElementById("P1_1").value);
+      let P2  = toNum(document.getElementById("P2_1").value);
+      let Ps1 = toNum(document.getElementById("Ps1_1").value);
+      let Ps2 = toNum(document.getElementById("Ps2_1").value);
+      let Pb1 = toNum(document.getElementById("Pb1_1").value);
+      let Pb2 = toNum(document.getElementById("Pb2_1").value);
+      let cosfi = toNum(document.getElementById("cosfi1").value);
+      let Z  = toNum(document.getElementById("Z1").value);
+
+      // Υπολογισμός K
+      if (K == null) {
+        if (U1 != null && U2 != null && U2 !== 0) {
+          K = U1 / U2;
+        } else if (W1 != null && W2 != null && W2 !== 0) {
+          K = W1 / W2;
+        } else if (I1 != null && I2 != null && I1 !== 0) {
+          K = I2 / I1;
+        }
+      }
+
+      // Από K συμπληρώνουμε τάσεις/σπείρες/ρεύματα
+      if (K != null) {
+        if (U1 != null && U2 == null) U2 = U1 / K;
+        if (U2 != null && U1 == null) U1 = U2 * K;
+
+        if (W1 != null && W2 == null) W2 = W1 / K;
+        if (W2 != null && W1 == null) W1 = W2 * K;
+
+        if (I1 != null && I2 == null) I2 = K * I1;
+        if (I2 != null && I1 == null && K !== 0) I1 = I2 / K;
+      }
+
+      // cosφ, ημφ
+      let sinfi = null;
+      if (cosfi != null) {
+        const tmp = 1 - cosfi * cosfi;
+        sinfi = tmp > 0 ? Math.sqrt(tmp) : 0;
+      }
+
+      // Φαινόμενη Ps1, Ps2
+      if (Ps1 == null) {
+        if (U1 != null && I1 != null) {
+          Ps1 = U1 * I1;
+        } else if (P1 != null && cosfi != null && cosfi !== 0) {
+          Ps1 = P1 / cosfi;
+        } else if (Pb1 != null && sinfi != null && sinfi !== 0) {
+          Ps1 = Pb1 / sinfi;
+        }
+      }
+
+      if (Ps2 == null) {
+        if (U2 != null && I2 != null) {
+          Ps2 = U2 * I2;
+        } else if (P2 != null && cosfi != null && cosfi !== 0) {
+          Ps2 = P2 / cosfi;
+        } else if (Pb2 != null && sinfi != null && sinfi !== 0) {
+          Ps2 = Pb2 / sinfi;
+        }
+      }
+
+      // Ιδανικός Μ/Σ: Ps1 ≈ Ps2
+      if (Ps1 != null && Ps2 == null) Ps2 = Ps1;
+      else if (Ps2 != null && Ps1 == null) Ps1 = Ps2;
+
+      // Πραγματική P1, P2
+      if (P1 == null) {
+        if (Ps1 != null && cosfi != null) {
+          P1 = Ps1 * cosfi;
+        } else if (U1 != null && I1 != null && cosfi != null) {
+          P1 = U1 * I1 * cosfi;
+        }
+      }
+      if (P2 == null) {
+        if (Ps2 != null && cosfi != null) {
+          P2 = Ps2 * cosfi;
+        } else if (U2 != null && I2 != null && cosfi != null) {
+          P2 = U2 * I2 * cosfi;
+        }
+      }
+
+      // P1 ≈ P2
+      if (P1 != null && P2 == null) P2 = P1;
+      else if (P2 != null && P1 == null) P1 = P2;
+
+      // Άεργη Pb1, Pb2
+      if (Pb1 == null && sinfi != null) {
+        if (Ps1 != null) Pb1 = Ps1 * sinfi;
+        else if (U1 != null && I1 != null) Pb1 = U1 * I1 * sinfi;
+      }
+      if (Pb2 == null && sinfi != null) {
+        if (Ps2 != null) Pb2 = Ps2 * sinfi;
+        else if (U2 != null && I2 != null) Pb2 = U2 * I2 * sinfi;
+      }
+
+      if (Pb1 != null && Pb2 == null) Pb2 = Pb1;
+      else if (Pb2 != null && Pb1 == null) Pb1 = Pb2;
+
+      // Αν δεν δόθηκε cosφ, προσπαθούμε από P & U·I ή P & Ps
+      if (cosfi == null) {
+        if (P1 != null && U1 != null && I1 != null && (U1 * I1) !== 0) {
+          cosfi = P1 / (U1 * I1);
+        } else if (P2 != null && U2 != null && I2 != null && (U2 * I2) !== 0) {
+          cosfi = P2 / (U2 * I2);
+        } else if (P1 != null && Ps1 != null && Ps1 !== 0) {
+          cosfi = P1 / Ps1;
+        } else if (P2 != null && Ps2 != null && Ps2 !== 0) {
+          cosfi = P2 / Ps2;
+        }
+
+        if (cosfi != null) {
+          const tmp2 = 1 - cosfi * cosfi;
+          sinfi = tmp2 > 0 ? Math.sqrt(tmp2) : 0;
+        }
+      }
+
+      // S1
+      let S1 = Ps1;
+      if (S1 == null) {
+        if (P1 != null && cosfi != null && cosfi !== 0) S1 = P1 / cosfi;
+        else if (Pb1 != null && sinfi != null && sinfi !== 0) S1 = Pb1 / sinfi;
+      }
+      if (S1 != null) {
+        if (U1 != null && I1 == null && U1 !== 0) I1 = S1 / U1;
+        else if (I1 != null && U1 == null && I1 !== 0) U1 = S1 / I1;
+      }
+
+      // S2
+      let S2 = Ps2;
+      if (S2 == null) {
+        if (P2 != null && cosfi != null && cosfi !== 0) S2 = P2 / cosfi;
+        else if (Pb2 != null && sinfi != null && sinfi !== 0) S2 = Pb2 / sinfi;
+      }
+      if (S2 != null) {
+        if (U2 != null && I2 == null && U2 !== 0) I2 = S2 / U2;
+        else if (I2 != null && U2 == null && I2 !== 0) U2 = S2 / I2;
+      }
+
+      // Χρήση Z
+      if (Z != null) {
+        if (U2 != null && I2 == null && Z !== 0) I2 = U2 / Z;
+        else if (I2 != null && U2 == null) U2 = Z * I2;
+        else if (U2 == null && I2 == null && S2 != null && Z > 0) {
+          U2 = Math.sqrt(S2 * Z);
+          I2 = Math.sqrt(S2 / Z);
+        }
+      }
+
+      if (Ps1 == null && U1 != null && I1 != null) Ps1 = U1 * I1;
+      if (Ps2 == null && U2 != null && I2 != null) Ps2 = U2 * I2;
+
+      if (Z == null && U2 != null && I2 != null && I2 !== 0) Z = U2 / I2;
+
+      // Γέμισμα δεξιάς στήλης
+      setIfEmpty("K2", K);
+      setIfEmpty("U1_2", U1);
+      setIfEmpty("U2_2", U2);
+      setIfEmpty("W1_2", W1);
+      setIfEmpty("W2_2", W2);
+      setIfEmpty("I1_2", I1);
+      setIfEmpty("I2_2", I2);
+
+      setIfEmpty("P1_2", P1);
+      setIfEmpty("P2_2", P2);
+      setIfEmpty("Ps1_2", Ps1);
+      setIfEmpty("Ps2_2", Ps2);
+      setIfEmpty("Pb1_2", Pb1);
+      setIfEmpty("Pb2_2", Pb2);
+      setIfEmpty("cosfi2", cosfi);
+      setIfEmpty("Z2", Z);
+
+      if (
+        K == null && U1 == null && U2 == null &&
+        W1 == null && W2 == null &&
+        I1 == null && I2 == null &&
+        P1 == null && P2 == null &&
+        Ps1 == null && Ps2 == null &&
+        Pb1 == null && Pb2 == null &&
+        cosfi == null && Z == null
+      ) {
+        document.getElementById("error").textContent =
+          "Δεν υπάρχουν αρκετά δεδομένα για υπολογισμό. Συμπλήρωσε τουλάχιστον 2-3 σχετικά μεγέθη (π.χ. U1, U2 ή U1, I1, συνφ ή P1, U1, συνφ).";
+      }
+    });
+
+    // Καθαρισμός
+    document.getElementById("clearBtn").addEventListener("click", function () {
+      document.getElementById("error").textContent = "";
+      const ids = [
+        "K1","U1_1","U2_1","W1_1","W2_1","I1_1","I2_1",
+        "P1_1","P2_1","Ps1_1","Ps2_1","Pb1_1","Pb2_1","cosfi1","Z1",
+        "K2","U1_2","U2_2","W1_2","W2_2","I1_2","I2_2",
+        "P1_2","P2_2","Ps1_2","Ps2_2","Pb1_2","Pb2_2","cosfi2","Z2"
+      ];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+    });
+
+    // -------- Βοηθητικά για την έξυπνη λύση --------
+    function numVal(id) {
+      const el = document.getElementById(id);
+      if (!el || el.value === "") return null;
+      const v = parseFloat(el.value);
+      return isNaN(v) ? null : v;
+    }
+
+    function approx(a, b) {
+      if (a == null || b == null) return false;
+      return Math.abs(a - b) <= Math.max(1e-6, Math.abs(b) * 1e-4);
+    }
+
+    // -------- Έξυπνη Δημιουργία Word Λύσης με ενότητες & Βήμα 2.x --------
+    function generateSolutionDoc() {
+      const fields = [
+        { label: "K (Σχέση Μεταφοράς)", symbol: "K", left: "K1", right: "K2" },
+        { label: "U1 (Τάση Πρωτεύοντος) [V]", symbol: "U1", left: "U1_1", right: "U1_2" },
+        { label: "U2 (Τάση Δευτερεύοντος) [V]", symbol: "U2", left: "U2_1", right: "U2_2" },
+        { label: "W1 (Σπείρες Πρωτεύοντος)", symbol: "W1", left: "W1_1", right: "W1_2" },
+        { label: "W2 (Σπείρες Δευτερεύοντος)", symbol: "W2", left: "W2_1", right: "W2_2" },
+        { label: "I1 (Ρεύμα Πρωτεύοντος) [A]", symbol: "I1", left: "I1_1", right: "I1_2" },
+        { label: "I2 (Ρεύμα Δευτερεύοντος) [A]", symbol: "I2", left: "I2_1", right: "I2_2" },
+        { label: "P1 (Πραγματική Ισχύς Πρωτεύοντος) [W]", symbol: "P1", left: "P1_1", right: "P1_2" },
+        { label: "P2 (Πραγματική Ισχύς Δευτερεύοντος) [W]", symbol: "P2", left: "P2_1", right: "P2_2" },
+        { label: "Ps1 (Φαινόμενη Ισχύς Πρωτεύοντος) [VA]", symbol: "Ps1", left: "Ps1_1", right: "Ps1_2" },
+        { label: "Ps2 (Φαινόμενη Ισχύς Δευτερεύοντος) [VA]", symbol: "Ps2", left: "Ps2_1", right: "Ps2_2" },
+        { label: "Pb1 (Άεργος Ισχύς Πρωτεύοντος) [var]", symbol: "Pb1", left: "Pb1_1", right: "Pb1_2" },
+        { label: "Pb2 (Άεργος Ισχύς Δευτερεύοντος) [var]", symbol: "Pb2", left: "Pb2_1", right: "Pb2_2" },
+        { label: "συνφ (Power Factor)", symbol: "cosφ", left: "cosfi1", right: "cosfi2" },
+        { label: "Z (Φορτίο) [Ω]", symbol: "Z", left: "Z1", right: "Z2" }
+      ];
+
+      const K   = numVal("K2")   ?? numVal("K1");
+      const U1  = numVal("U1_2") ?? numVal("U1_1");
+      const U2  = numVal("U2_2") ?? numVal("U2_1");
+      const W1  = numVal("W1_2") ?? numVal("W1_1");
+      const W2  = numVal("W2_2") ?? numVal("W2_1");
+      const I1  = numVal("I1_2") ?? numVal("I1_1");
+      const I2  = numVal("I2_2") ?? numVal("I2_1");
+      const P1  = numVal("P1_2") ?? numVal("P1_1");
+      const P2  = numVal("P2_2") ?? numVal("P2_1");
+      const Ps1 = numVal("Ps1_2") ?? numVal("Ps1_1");
+      const Ps2 = numVal("Ps2_2") ?? numVal("Ps2_1");
+      const Pb1 = numVal("Pb1_2") ?? numVal("Pb1_1");
+      const Pb2 = numVal("Pb2_2") ?? numVal("Pb2_1");
+      const cosfi = numVal("cosfi2") ?? numVal("cosfi1");
+      const Z     = numVal("Z2") ?? numVal("Z1");
+
+      let sinfi = null;
+      if (cosfi != null) {
+        const tmp = 1 - cosfi * cosfi;
+        sinfi = tmp > 0 ? Math.sqrt(tmp) : 0;
+      }
+
+      let dataLines = [];
+
+      // Αποτελέσματα ανά ενότητα
+      let secA = []; // Μετασχηματιστής
+      let secB = []; // Ισχύες
+      let secC = []; // συνφ
+      let secD = []; // Z
+
+      // Βήμα 1 – Δεδομένα
+      fields.forEach(f => {
+        const leftEl  = document.getElementById(f.left);
+        const rightEl = document.getElementById(f.right);
+        const leftVal  = leftEl ? leftEl.value : "";
+        const rightVal = rightEl ? rightEl.value : "";
+
+        if (leftVal !== "") {
+          dataLines.push(`• Δίνεται: ${f.symbol} = ${leftVal}   (${f.label})`);
+        }
+
+        // Θεωρούμε "υπολογισμένο" ό,τι υπάρχει στη δεξιά στήλη και δεν ταυτίζεται με το αρχικό
+        if (rightVal !== "" && (leftVal === "" || leftVal !== rightVal)) {
+          const v = parseFloat(rightVal);
+          if (isNaN(v)) return;
+
+          let stepText = "";
+          stepText += `Υπολογίζουμε ${f.symbol} = ${rightVal}   (${f.label})\r\n`;
+
+          switch (f.symbol) {
+            case "K":
+              if (U1 != null && U2 != null && approx(v, U1 / U2)) {
+                stepText += `Από τη σχέση του ιδανικού μετασχηματιστή: K = U1 / U2\r\n`;
+                stepText += `⇒ K = ${U1} / ${U2} = ${v}\r\n`;
+              } else if (W1 != null && W2 != null && approx(v, W1 / W2)) {
+                stepText += `Από τη σχέση K = W1 / W2\r\n`;
+                stepText += `⇒ K = ${W1} / ${W2} = ${v}\r\n`;
+              } else if (I1 != null && I2 != null && approx(v, I2 / I1)) {
+                stepText += `Από τη σχέση K = I2 / I1\r\n`;
+                stepText += `⇒ K = ${I2} / ${I1} = ${v}\r\n`;
+              } else {
+                stepText += `Χρησιμοποιούμε τις βασικές σχέσεις K = U1/U2 = W1/W2 = I2/I1.\r\n`;
+              }
+              secA.push({title: "Υπολογισμός λόγου μετασχηματισμού K", text: stepText});
+              break;
+
+            case "U1":
+              if (K != null && U2 != null && approx(v, K * U2)) {
+                stepText += `Από K = U1 / U2 ⇒ U1 = K · U2\r\n`;
+                stepText += `⇒ U1 = ${K} · ${U2} = ${v} V\r\n`;
+              } else if (Ps1 != null && I1 != null && approx(v, Ps1 / I1)) {
+                stepText += `Από Ps1 = U1 · I1 ⇒ U1 = Ps1 / I1\r\n`;
+                stepText += `⇒ U1 = ${Ps1} / ${I1} = ${v} V\r\n`;
+              }
+              secA.push({title: "Υπολογισμός τάσης πρωτεύοντος U1", text: stepText});
+              break;
+
+            case "U2":
+              if (K != null && U1 != null && approx(v, U1 / K)) {
+                stepText += `Από K = U1 / U2 ⇒ U2 = U1 / K\r\n`;
+                stepText += `⇒ U2 = ${U1} / ${K} = ${v} V\r\n`;
+              } else if (Z != null && I2 != null && approx(v, Z * I2)) {
+                stepText += `Από Z = U2 / I2 ⇒ U2 = Z · I2\r\n`;
+                stepText += `⇒ U2 = ${Z} · ${I2} = ${v} V\r\n`;
+              } else if (Ps2 != null && I2 != null && approx(v, Ps2 / I2)) {
+                stepText += `Από Ps2 = U2 · I2 ⇒ U2 = Ps2 / I2\r\n`;
+                stepText += `⇒ U2 = ${Ps2} / ${I2} = ${v} V\r\n`;
+              }
+              secA.push({title: "Υπολογισμός τάσης δευτερεύοντος U2", text: stepText});
+              break;
+
+            case "W1":
+              if (K != null && W2 != null && approx(v, K * W2)) {
+                stepText += `Από K = W1 / W2 ⇒ W1 = K · W2\r\n`;
+                stepText += `⇒ W1 = ${K} · ${W2} = ${v}\r\n`;
+              }
+              secA.push({title: "Υπολογισμός σπειρών πρωτεύοντος W1", text: stepText});
+              break;
+
+            case "W2":
+              if (K != null && W1 != null && approx(v, W1 / K)) {
+                stepText += `Από K = W1 / W2 ⇒ W2 = W1 / K\r\n`;
+                stepText += `⇒ W2 = ${W1} / ${K} = ${v}\r\n`;
+              }
+              secA.push({title: "Υπολογισμός σπειρών δευτερεύοντος W2", text: stepText});
+              break;
+
+            case "I1":
+              if (K != null && I2 != null && approx(v, I2 / K)) {
+                stepText += `Από K = I2 / I1 ⇒ I1 = I2 / K\r\n`;
+                stepText += `⇒ I1 = ${I2} / ${K} = ${v} A\r\n`;
+              } else if (Ps1 != null && U1 != null && approx(v, Ps1 / U1)) {
+                stepText += `Από Ps1 = U1 · I1 ⇒ I1 = Ps1 / U1\r\n`;
+                stepText += `⇒ I1 = ${Ps1} / ${U1} = ${v} A\r\n`;
+              } else if (P1 != null && U1 != null && cosfi != null && approx(v, P1 / (U1 * cosfi))) {
+                stepText += `Από P1 = U1 · I1 · συνφ ⇒ I1 = P1 / (U1·συνφ)\r\n`;
+                stepText += `⇒ I1 = ${P1} / (${U1}·${cosfi}) = ${v} A\r\n`;
+              }
+              secA.push({title: "Υπολογισμός ρεύματος πρωτεύοντος I1", text: stepText});
+              break;
+
+            case "I2":
+              if (K != null && I1 != null && approx(v, K * I1)) {
+                stepText += `Από K = I2 / I1 ⇒ I2 = K · I1\r\n`;
+                stepText += `⇒ I2 = ${K} · ${I1} = ${v} A\r\n`;
+              } else if (Ps2 != null && U2 != null && approx(v, Ps2 / U2)) {
+                stepText += `Από Ps2 = U2 · I2 ⇒ I2 = Ps2 / U2\r\n`;
+                stepText += `⇒ I2 = ${Ps2} / ${U2} = ${v} A\r\n`;
+              } else if (P2 != null && U2 != null && cosfi != null && approx(v, P2 / (U2 * cosfi))) {
+                stepText += `Από P2 = U2 · I2 · συνφ ⇒ I2 = P2 / (U2·συνφ)\r\n`;
+                stepText += `⇒ I2 = ${P2} / (${U2}·${cosfi}) = ${v} A\r\n`;
+              }
+              secA.push({title: "Υπολογισμός ρεύματος δευτερεύοντος I2", text: stepText});
+              break;
+
+            case "Ps1":
+              if (U1 != null && I1 != null && approx(v, U1 * I1)) {
+                stepText += `Από τον ορισμό της φαινόμενης ισχύος: Ps1 = U1 · I1\r\n`;
+                stepText += `⇒ Ps1 = ${U1} · ${I1} = ${v} VA\r\n`;
+              } else if (P1 != null && cosfi != null && approx(v, P1 / cosfi)) {
+                stepText += `Από P1 = Ps1 · συνφ ⇒ Ps1 = P1 / συνφ\r\n`;
+                stepText += `⇒ Ps1 = ${P1} / ${cosfi} = ${v} VA\r\n`;
+              }
+              secB.push({title: "Υπολογισμός φαινόμενης ισχύος πρωτεύοντος Ps1", text: stepText});
+              break;
+
+            case "Ps2":
+              if (U2 != null && I2 != null && approx(v, U2 * I2)) {
+                stepText += `Από Ps2 = U2 · I2\r\n`;
+                stepText += `⇒ Ps2 = ${U2} · ${I2} = ${v} VA\r\n`;
+              } else if (P2 != null && cosfi != null && approx(v, P2 / cosfi)) {
+                stepText += `Από P2 = Ps2 · συνφ ⇒ Ps2 = P2 / συνφ\r\n`;
+                stepText += `⇒ Ps2 = ${P2} / ${cosfi} = ${v} VA\r\n`;
+              }
+              secB.push({title: "Υπολογισμός φαινόμενης ισχύος δευτερεύοντος Ps2", text: stepText});
+              break;
+
+            case "P1":
+              if (U1 != null && I1 != null && cosfi != null && approx(v, U1 * I1 * cosfi)) {
+                stepText += `Από τον ορισμό πραγματικής ισχύος: P1 = U1 · I1 · συνφ\r\n`;
+                stepText += `⇒ P1 = ${U1} · ${I1} · ${cosfi} = ${v} W\r\n`;
+              } else if (Ps1 != null && cosfi != null && approx(v, Ps1 * cosfi)) {
+                stepText += `Από P1 = Ps1 · συνφ\r\n`;
+                stepText += `⇒ P1 = ${Ps1} · ${cosfi} = ${v} W\r\n`;
+              }
+              secB.push({title: "Υπολογισμός πραγματικής ισχύος πρωτεύοντος P1", text: stepText});
+              break;
+
+            case "P2":
+              if (U2 != null && I2 != null && cosfi != null && approx(v, U2 * I2 * cosfi)) {
+                stepText += `Από P2 = U2 · I2 · συνφ\r\n`;
+                stepText += `⇒ P2 = ${U2} · ${I2} · ${cosfi} = ${v} W\r\n`;
+              } else if (Ps2 != null && cosfi != null && approx(v, Ps2 * cosfi)) {
+                stepText += `Από P2 = Ps2 · συνφ\r\n`;
+                stepText += `⇒ P2 = ${Ps2} · ${cosfi} = ${v} W\r\n`;
+              }
+              secB.push({title: "Υπολογισμός πραγματικής ισχύος δευτερεύοντος P2", text: stepText});
+              break;
+
+            case "Pb1":
+              if (U1 != null && I1 != null && sinfi != null && approx(v, U1 * I1 * sinfi)) {
+                stepText += `Από Pb1 = U1 · I1 · ημφ\r\n`;
+                stepText += `⇒ Pb1 = ${U1} · ${I1} · ${sinfi.toFixed(4)} ≈ ${v} var\r\n`;
+              } else if (Ps1 != null && sinfi != null && approx(v, Ps1 * sinfi)) {
+                stepText += `Από Pb1 = Ps1 · ημφ\r\n`;
+                stepText += `⇒ Pb1 = ${Ps1} · ${sinfi.toFixed(4)} ≈ ${v} var\r\n`;
+              }
+              secB.push({title: "Υπολογισμός άεργης ισχύος πρωτεύοντος Pb1", text: stepText});
+              break;
+
+            case "Pb2":
+              if (U2 != null && I2 != null && sinfi != null && approx(v, U2 * I2 * sinfi)) {
+                stepText += `Από Pb2 = U2 · I2 · ημφ\r\n`;
+                stepText += `⇒ Pb2 = ${U2} · ${I2} · ${sinfi.toFixed(4)} ≈ ${v} var\r\n`;
+              } else if (Ps2 != null && sinfi != null && approx(v, Ps2 * sinfi)) {
+                stepText += `Από Pb2 = Ps2 · ημφ\r\n`;
+                stepText += `⇒ Pb2 = ${Ps2} · ${sinfi.toFixed(4)} ≈ ${v} var\r\n`;
+              }
+              secB.push({title: "Υπολογισμός άεργης ισχύος δευτερεύοντος Pb2", text: stepText});
+              break;
+
+            case "cosφ":
+              if (P1 != null && U1 != null && I1 != null && approx(v, P1 / (U1 * I1))) {
+                stepText += `Από P1 = U1 · I1 · συνφ\r\n`;
+                stepText += `⇒ συνφ = P1 / (U1·I1) = ${P1} / (${U1}·${I1}) = ${v}\r\n`;
+              } else if (P2 != null && U2 != null && I2 != null && approx(v, P2 / (U2 * I2))) {
+                stepText += `Από P2 = U2 · I2 · συνφ\r\n`;
+                stepText += `⇒ συνφ = P2 / (U2·I2) = ${P2} / (${U2}·${I2}) = ${v}\r\n`;
+              } else if (P1 != null && Ps1 != null && approx(v, P1 / Ps1)) {
+                stepText += `Από P1 = Ps1 · συνφ\r\n`;
+                stepText += `⇒ συνφ = P1 / Ps1 = ${P1} / ${Ps1} = ${v}\r\n`;
+              } else if (P2 != null && Ps2 != null && approx(v, P2 / Ps2)) {
+                stepText += `Από P2 = Ps2 · συνφ\r\n`;
+                stepText += `⇒ συνφ = P2 / Ps2 = ${P2} / ${Ps2} = ${v}\r\n`;
+              }
+              secC.push({title: "Υπολογισμός συντελεστή ισχύος cosφ", text: stepText});
+              break;
+
+            case "Z":
+              if (U2 != null && I2 != null && approx(v, U2 / I2)) {
+                stepText += `Από τον ορισμό του φορτίου: Z = U2 / I2\r\n`;
+                stepText += `⇒ Z = ${U2} / ${I2} = ${v} Ω\r\n`;
+              }
+              secD.push({title: "Υπολογισμός φορτίου Z", text: stepText});
+              break;
+          }
+        }
+      });
+
+      if (dataLines.length === 0 && secA.length === 0 && secB.length === 0 &&
+          secC.length === 0 && secD.length === 0) {
+        alert("Δεν υπάρχουν συμπληρωμένα δεδομένα ή υπολογισμένα μεγέθη για να δημιουργηθεί λύση.");
+        return;
+      }
+
+      let text = "";
+      text += "ΛΥΣΗ ΑΣΚΗΣΗΣ ΜΕΤΑΣΧΗΜΑΤΙΣΤΗ\r\n\r\n";
+
+      if (dataLines.length > 0) {
+        text += "Βήμα 1: Δεδομένα άσκησης\r\n";
+        dataLines.forEach(line => { text += line + "\r\n"; });
+        text += "\r\n";
+      }
+
+      let stepIndex = 1;
+      if (secA.length + secB.length + secC.length + secD.length > 0) {
+        text += "Βήμα 2: Υπολογισμοί / Αποτελέσματα\r\n\r\n";
+
+        if (secA.length > 0) {
+          text += "Ενότητα Α: Μεγέθη μετασχηματιστή (τάσεις, ρεύματα, σπείρες)\r\n";
+          secA.forEach(s => {
+            text += `Βήμα 2.${stepIndex}: ${s.title}\r\n`;
+            text += s.text + "\r\n";
+            stepIndex++;
+          });
+          text += "\r\n";
+        }
+
+        if (secB.length > 0) {
+          text += "Ενότητα Β: Ισχύες (πραγματική, φαινόμενη, άεργη)\r\n";
+          secB.forEach(s => {
+            text += `Βήμα 2.${stepIndex}: ${s.title}\r\n`;
+            text += s.text + "\r\n";
+            stepIndex++;
+          });
+          text += "\r\n";
+        }
+
+        if (secC.length > 0) {
+          text += "Ενότητα Γ: Συντελεστής ισχύος cosφ\r\n";
+          secC.forEach(s => {
+            text += `Βήμα 2.${stepIndex}: ${s.title}\r\n`;
+            text += s.text + "\r\n";
+            stepIndex++;
+          });
+          text += "\r\n";
+        }
+
+        if (secD.length > 0) {
+          text += "Ενότητα Δ: Φορτίο Z\r\n";
+          secD.forEach(s => {
+            text += `Βήμα 2.${stepIndex}: ${s.title}\r\n`;
+            text += s.text + "\r\n";
+            stepIndex++;
+          });
+          text += "\r\n";
+        }
+      }
+
+      text += "Σχέσεις που χρησιμοποιούνται (θεωρία ιδανικού μετασχηματιστή):\r\n";
+      text += "• K = U1 / U2 = W1 / W2 = I2 / I1\r\n";
+      text += "• Ps = U · I\r\n";
+      text += "• P = U · I · συνφ\r\n";
+      text += "• Pb = U · I · ημφ\r\n";
+      text += "• Z = U2 / I2\r\n";
+
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      const htmlContent =
+        "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+        "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+        "xmlns='http://www.w3.org/TR/REC-html40'>" +
+        "<head><meta charset='UTF-8'></head><body>" +
+        "<pre>" + escapeHtml(text) + "</pre>" +
+        "</body></html>";
+
+      const blob = new Blob(["\ufeff", htmlContent], {
+        type: "application/msword"
+      });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Lysi_Metasximatisti.doc";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("solutionBtn").addEventListener("click", generateSolutionDoc);
+  </script>
+</body>
+</html>
