@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Κουίζ 1.1.3 | Λειτουργία Μετασχηματιστών</title>
+  <style>
+    :root{
+      --blue:#1d4ed8;
+      --blueDark:#0f3b82;
+      --blueLight:#e8f0ff;
+      --green:#15803d;
+      --greenLight:#e9f8ef;
+      --red:#b91c1c;
+      --redLight:#fff0f0;
+      --orange:#f97316;
+      --orangeLight:#fff7ed;
+      --gray:#f8fafc;
+      --dark:#1f2937;
+      --muted:#64748b;
+      --border:#d1d5db;
+      --shadow:0 7px 20px rgba(15,23,42,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Segoe UI", Tahoma, Arial, sans-serif;
+      background:linear-gradient(180deg,#ecf5ff 0%,#ffffff 100%);
+      color:var(--dark);
+      line-height:1.55;
+    }
+    header{
+      background:linear-gradient(135deg,#0f3b82,#2563eb);
+      color:white;
+      text-align:center;
+      padding:30px 18px;
+      box-shadow:var(--shadow);
+    }
+    header h1{margin:0 0 8px;font-size:clamp(1.35rem,3vw,2.2rem)}
+    header p{margin:4px auto;max-width:980px;opacity:.95}
+    .wrap{max-width:1120px;margin:24px auto;padding:0 16px 46px}
+    .toc{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:14px;
+      margin-bottom:22px;
+    }
+    .toc a{
+      display:block;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:15px 16px;
+      text-decoration:none;
+      color:var(--dark);
+      box-shadow:var(--shadow);
+    }
+    .toc a:hover{transform:translateY(-1px);border-color:#93c5fd}
+    .card{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:22px;
+      margin:20px 0;
+      box-shadow:var(--shadow);
+    }
+    h2{
+      margin:0 0 8px;
+      color:var(--blueDark);
+      border-left:6px solid var(--blue);
+      padding-left:12px;
+    }
+    h3{margin:18px 0 8px;color:#0f172a}
+    .note{
+      background:var(--blueLight);
+      border-left:5px solid var(--blue);
+      padding:12px 14px;
+      border-radius:12px;
+      margin:14px 0 18px;
+    }
+    .formula{
+      display:inline-block;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      border-radius:10px;
+      padding:5px 9px;
+      margin:2px 4px 2px 0;
+      font-weight:700;
+    }
+    .question{
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      padding:15px;
+      margin:14px 0;
+      background:#fbfdff;
+    }
+    .question p{margin:0 0 10px;font-weight:650}
+    label.option{
+      display:block;
+      padding:8px 10px;
+      margin:6px 0;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    label.option:hover{border-color:#93c5fd;background:#f8fbff}
+    input[type="radio"]{margin-right:8px}
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    button{
+      border:0;
+      background:var(--blue);
+      color:#fff;
+      padding:10px 16px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:1rem;
+      font-weight:650;
+      box-shadow:0 4px 12px rgba(37,99,235,.22);
+    }
+    button.secondary{background:#475569;box-shadow:none}
+    button.orange{background:var(--orange);box-shadow:none}
+    button:hover{filter:brightness(.96)}
+    .result{
+      display:none;
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:12px;
+      font-weight:700;
+    }
+    .ok{background:var(--greenLight);color:var(--green);border:1px solid #a7f3d0}
+    .bad{background:var(--redLight);color:var(--red);border:1px solid #fecaca}
+    .answerKey{
+      display:none;
+      background:var(--orangeLight);
+      border:1px solid #fed7aa;
+      border-left:5px solid var(--orange);
+      padding:12px 14px;
+      border-radius:12px;
+      margin-top:12px;
+    }
+    .correctChoice{background:var(--greenLight)!important;border-color:#86efac!important}
+    .wrongChoice{background:var(--redLight)!important;border-color:#fecaca!important}
+    .dragArea{display:grid;grid-template-columns:1fr;gap:18px}
+    .cardsBank, .dropGrid{
+      border:1px dashed #cbd5e1;
+      border-radius:16px;
+      padding:14px;
+      background:#f8fafc;
+      touch-action:manipulation;
+    }
+    .cardsBank h3,.dropGrid h3{margin-top:0}
+    .chips{display:flex;flex-wrap:wrap;gap:10px;min-height:54px}
+    .chip{
+      background:#fff;
+      border:1px solid #cbd5e1;
+      border-radius:999px;
+      padding:9px 12px;
+      cursor:grab;
+      user-select:none;
+      box-shadow:0 2px 7px rgba(0,0,0,.05);
+      max-width:100%;
+    }
+    .chip:active{cursor:grabbing}
+    .chip.selected{outline:3px solid #fbbf24;background:#fffbeb}
+    .dropGrid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(245px,1fr));
+      gap:12px;
+    }
+    .dropZone{
+      background:#fff;
+      border:2px dashed #cbd5e1;
+      border-radius:16px;
+      padding:12px;
+      min-height:180px;
+      touch-action:manipulation;
+    }
+    .dropZone.over{background:#eef6ff;border-color:#60a5fa}
+    .dropZone h4{margin:0 0 8px;color:var(--blueDark);font-size:1rem}
+    .dropZone .chips{display:block;min-height:110px}
+    .dropZone .chip{display:block;border-radius:12px;margin:7px 0;cursor:grab}
+    .chip.good{background:var(--greenLight);border-color:#86efac}
+    .chip.miss{background:var(--redLight);border-color:#fecaca}
+    .calcGrid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(310px,1fr));
+      gap:14px;
+    }
+    .calc{
+      border:1px solid #e5e7eb;
+      border-radius:16px;
+      background:#fbfdff;
+      padding:15px;
+    }
+    .calc p{margin:0 0 10px}
+    .calc label{display:block;margin:8px 0 4px;font-weight:650}
+    .calc input{
+      width:100%;
+      padding:9px 10px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      font-size:1rem;
+    }
+    .calc .miniResult{
+      display:none;
+      margin-top:10px;
+      padding:9px 11px;
+      border-radius:12px;
+      font-weight:700;
+    }
+    .small{font-size:.94rem;color:var(--muted)}
+    footer{
+      text-align:center;
+      color:var(--muted);
+      padding:20px 10px 36px;
+      font-size:.92rem;
+    }
+    @media print{
+      body{background:#fff}
+      header,.toc,.btnrow,footer{display:none}
+      .card{box-shadow:none;break-inside:avoid}
+      .answerKey{display:block}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Κουίζ: Λειτουργία Μετασχηματιστών — Παρ. 1.1.3</h1>
+  <p>Βασικά μέρη Μ/Σ, πρωτεύον και δευτερεύον τύλιγμα, λειτουργία χωρίς φορτίο, λειτουργία με φορτίο, σχέση μεταφοράς και απλοί υπολογισμοί.</p>
+</header>
+
+<div class="wrap">
+  <nav class="toc">
+    <a href="#partA"><strong>Μέρος Α</strong><br>Θεωρία — Σωστό/Λάθος και πολλαπλής επιλογής</a>
+    <a href="#partB"><strong>Μέρος Β</strong><br>Drag & Drop — Έννοιες λειτουργίας Μ/Σ</a>
+    <a href="#partC"><strong>Μέρος Γ</strong><br>Απλοί υπολογισμοί σχέσης μεταφοράς</a>
+  </nav>
+
+  <section class="card" id="partA">
+    <h2>Μέρος Α — Θεωρία 1.1.3</h2>
+    <div class="note">
+      Επίλεξε μία απάντηση σε κάθε ερώτηση. Στο τέλος πάτησε <strong>Έλεγχος απαντήσεων</strong>.
+    </div>
+    <div id="quizA"></div>
+    <div class="btnrow">
+      <button onclick="checkPartA()">Έλεγχος απαντήσεων</button>
+      <button class="secondary" onclick="resetPartA()">Καθαρισμός</button>
+      <button class="orange" onclick="toggleKey('keyA')">Εμφάνιση/Απόκρυψη λύσεων</button>
+    </div>
+    <div class="result" id="resultA"></div>
+    <div class="answerKey" id="keyA"></div>
+  </section>
+
+  <section class="card" id="partB">
+    <h2>Μέρος Β — Drag & Drop: Έννοιες λειτουργίας Μ/Σ</h2>
+    <div class="note">
+      Σύρε κάθε καρτέλα στη σωστή κατηγορία. Σε κινητό ή tablet μπορείς να πατήσεις μία καρτέλα και μετά το πλαίσιο της κατηγορίας.
+    </div>
+    <p class="small">Μπορείς να αφήνεις την καρτέλα οπουδήποτε μέσα στο πλαίσιο της κατηγορίας.</p>
+
+    <div class="dragArea">
+      <div class="cardsBank">
+        <h3>Καρτέλες</h3>
+        <div class="chips" id="bank"></div>
+      </div>
+
+      <div class="dropGrid" id="dropGrid">
+        <div class="dropZone" data-zone="parts">
+          <h4>Α. Βασικά μέρη Μ/Σ</h4>
+          <div class="chips"></div>
+        </div>
+        <div class="dropZone" data-zone="roles">
+          <h4>Β. Ρόλοι τυλιγμάτων</h4>
+          <div class="chips"></div>
+        </div>
+        <div class="dropZone" data-zone="noload">
+          <h4>Γ. Λειτουργία χωρίς φορτίο</h4>
+          <div class="chips"></div>
+        </div>
+        <div class="dropZone" data-zone="load">
+          <h4>Δ. Λειτουργία με φορτίο</h4>
+          <div class="chips"></div>
+        </div>
+        <div class="dropZone" data-zone="relations">
+          <h4>Ε. Σχέσεις και συμπεράσματα</h4>
+          <div class="chips"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button onclick="checkDrag()">Έλεγχος ταξινόμησης</button>
+      <button class="secondary" onclick="resetDrag()">Ανακάτεμα ξανά</button>
+      <button class="orange" onclick="toggleKey('keyB')">Εμφάνιση/Απόκρυψη λύσεων</button>
+    </div>
+    <div class="result" id="resultB"></div>
+    <div class="answerKey" id="keyB"></div>
+  </section>
+
+  <section class="card" id="partC">
+    <h2>Μέρος Γ — Απλοί υπολογισμοί</h2>
+    <div class="note">
+      Χρησιμοποίησε τον τύπο:
+      <span class="formula">K = U1 / U2 = W1 / W2</span>
+      <br><strong>Χωρίς τα ρεύματα.</strong> Όπου χρειάζεται, γράψε μόνο αριθμό χωρίς μονάδα.
+    </div>
+    <div class="calcGrid" id="calcGrid"></div>
+    <div class="btnrow">
+      <button onclick="checkCalcs()">Έλεγχος υπολογισμών</button>
+      <button class="secondary" onclick="resetCalcs()">Καθαρισμός</button>
+      <button class="orange" onclick="toggleKey('keyC')">Εμφάνιση/Απόκρυψη λύσεων</button>
+    </div>
+    <div class="result" id="resultC"></div>
+    <div class="answerKey" id="keyC"></div>
+  </section>
+</div>
+
+<footer>
+  Κουίζ για εκπαιδευτική χρήση — Κεφάλαιο 1.1.3, Λειτουργία Μετασχηματιστών.
+</footer>
+
+<script>
+const questionsA = [
+  {
+    q:"1. Κάθε μετασχηματιστής αποτελείται βασικά από έναν πυρήνα και δύο τυλίγματα.",
+    choices:["Λάθος","Σωστό"],
+    correct:1,
+    exp:"Σωστό. Ο πυρήνας αποτελεί το μαγνητικό κύκλωμα και υπάρχουν δύο τυλίγματα."
+  },
+  {
+    q:"2. Ο πυρήνας του Μ/Σ αποτελεί:",
+    choices:["το μαγνητικό κύκλωμα","το φορτίο","τον καταναλωτή","την ασφάλεια του Μ/Σ"],
+    correct:0,
+    exp:"Ο πυρήνας αποτελεί το μαγνητικό κύκλωμα του μετασχηματιστή."
+  },
+  {
+    q:"3. Πρωτεύον λέγεται το τύλιγμα που:",
+    choices:["δίνει πάντα τη μικρότερη τάση","συνδέεται με την ηλεκτρική πηγή","είναι πάντα το δευτερεύον Χ.Τ.","δεν διαρρέεται ποτέ από ρεύμα"],
+    correct:1,
+    exp:"Πρωτεύον είναι το τύλιγμα που συνδέεται με την ηλεκτρική πηγή."
+  },
+  {
+    q:"4. Δευτερεύον λέγεται το τύλιγμα που μας δίνει τη μετασχηματισμένη τάση.",
+    choices:["Σωστό","Λάθος"],
+    correct:0,
+    exp:"Σωστό. Το δευτερεύον δίνει τη μετασχηματισμένη τάση."
+  },
+  {
+    q:"5. Σε Μ/Σ υποβιβασμού τάσης, το πρωτεύον είναι συνήθως:",
+    choices:["τύλιγμα Χ.Τ.","τύλιγμα Υ.Τ.","πάντα ανοιχτό κύκλωμα","χωρίς σπείρες"],
+    correct:1,
+    exp:"Στον Μ/Σ υποβιβασμού, το πρωτεύον είναι το τύλιγμα υψηλής τάσης."
+  },
+  {
+    q:"6. Όταν ένας Μ/Σ λειτουργεί χωρίς φορτίο, το δευτερεύον του:",
+    choices:["είναι βραχυκυκλωμένο","τροφοδοτεί μεγάλο κινητήρα","δεν τροφοδοτεί κατανάλωση","έχει μηδενική τάση πάντοτε"],
+    correct:2,
+    exp:"Χωρίς φορτίο σημαίνει ότι το δευτερεύον δεν τροφοδοτεί καταναλωτή, δηλαδή είναι ανοιχτό."
+  },
+  {
+    q:"7. Στη λειτουργία χωρίς φορτίο ισχύει ότι ο λόγος των τάσεων είναι ίσος με τον λόγο των σπειρών.",
+    choices:["Λάθος","Σωστό"],
+    correct:1,
+    exp:"Σωστό. U1/U2 = W1/W2."
+  },
+  {
+    q:"8. Η σχέση μεταφοράς Κ ενός Μ/Σ ορίζεται ως:",
+    choices:["K = U2 / U1 μόνο","K = W1 / W2","K = I1 + I2","K = W1 · W2"],
+    correct:1,
+    exp:"Η σχέση μεταφοράς είναι K = W1/W2."
+  },
+  {
+    q:"9. Λέμε ότι ένας Μ/Σ λειτουργεί με φορτίο όταν το δευτερεύον του τροφοδοτεί καταναλωτή ή ζυγούς δικτύου.",
+    choices:["Σωστό","Λάθος"],
+    correct:0,
+    exp:"Σωστό. Αυτή είναι η λειτουργία με φορτίο."
+  },
+  {
+    q:"10. Αν ένας Μ/Σ ανυψώνει την τάση στο δευτερεύον, τότε περίπου:",
+    choices:["ανυψώνει και την ένταση με την ίδια αναλογία","υποβιβάζει την ένταση με την ίδια περίπου αναλογία","μηδενίζει την ισχύ","μετατρέπει το Ε.Ρ. σε Σ.Ρ."],
+    correct:1,
+    exp:"Αν ανυψώνει την τάση, υποβιβάζει περίπου με την ίδια αναλογία την ένταση."
+  }
+];
+
+const dragItems = [
+  {text:"Πυρήνας", zone:"parts"},
+  {text:"Τύλιγμα υψηλής τάσης Υ.Τ.", zone:"parts"},
+  {text:"Τύλιγμα χαμηλής τάσης Χ.Τ.", zone:"parts"},
+  {text:"Δύο τυλίγματα", zone:"parts"},
+
+  {text:"Πρωτεύον: συνδέεται με την ηλεκτρική πηγή", zone:"roles"},
+  {text:"Δευτερεύον: δίνει τη μετασχηματισμένη τάση", zone:"roles"},
+  {text:"Σε υποβιβασμό, το πρωτεύον είναι Υ.Τ.", zone:"roles"},
+
+  {text:"Το δευτερεύον είναι ανοιχτό", zone:"noload"},
+  {text:"Δεν τροφοδοτεί κατανάλωση", zone:"noload"},
+  {text:"U2 = E2 περίπου", zone:"noload"},
+
+  {text:"Το δευτερεύον τροφοδοτεί καταναλωτή Κ", zone:"load"},
+  {text:"Το πρωτεύον απορροφά μεγαλύτερη ένταση από τη λειτουργία χωρίς φορτίο", zone:"load"},
+  {text:"Η τάση U2 είναι γενικά μικρότερη από την E2 λόγω πτώσης τάσης", zone:"load"},
+
+  {text:"K = U1/U2 = W1/W2", zone:"relations"},
+  {text:"U2 = U1/K", zone:"relations"},
+  {text:"I2 = K · I1", zone:"relations"},
+  {text:"Αν αυξάνεται η τάση, μειώνεται περίπου η ένταση", zone:"relations"}
+];
+
+const calcs = [
+  {
+    q:"1. Ένας Μ/Σ έχει W1 = 1000 σπείρες, W2 = 500 σπείρες και U1 = 230 V. Να βρεθούν K και U2.",
+    fields:[
+      {label:"K =", ans:2},
+      {label:"U2 σε V =", ans:115}
+    ],
+    solution:"K = W1/W2 = 1000/500 = 2. Επειδή K = U1/U2, έχουμε U2 = U1/K = 230/2 = 115 V."
+  },
+  {
+    q:"2. Ένας Μ/Σ έχει W1 = 200 σπείρες, W2 = 1000 σπείρες και U1 = 24 V. Να βρεθούν K και U2.",
+    fields:[
+      {label:"K =", ans:0.2},
+      {label:"U2 σε V =", ans:120}
+    ],
+    solution:"K = W1/W2 = 200/1000 = 0,2. Επειδή K = U1/U2, έχουμε U2 = U1/K = 24/0,2 = 120 V."
+  },
+  {
+    q:"3. Σε Μ/Σ έχουμε U1 = 400 V, U2 = 100 V και W2 = 250 σπείρες. Να βρεθούν K και W1.",
+    fields:[
+      {label:"K =", ans:4},
+      {label:"W1 σε σπείρες =", ans:1000}
+    ],
+    solution:"K = U1/U2 = 400/100 = 4. Επειδή K = W1/W2, έχουμε W1 = K·W2 = 4·250 = 1000 σπείρες."
+  },
+  {
+    q:"4. Ένας Μ/Σ έχει σχέση μεταφοράς K = 5 και U1 = 230 V. Να βρεθεί η τάση U2.",
+    fields:[
+      {label:"U2 σε V =", ans:46}
+    ],
+    solution:"Από K = U1/U2 έχουμε U2 = U1/K = 230/5 = 46 V."
+  },
+  {
+    q:"5. Ένας Μ/Σ έχει U1 = 220 V, U2 = 55 V και W2 = 300 σπείρες. Να βρεθούν K και W1.",
+    fields:[
+      {label:"K =", ans:4},
+      {label:"W1 σε σπείρες =", ans:1200}
+    ],
+    solution:"K = U1/U2 = 220/55 = 4. Επειδή K = W1/W2, έχουμε W1 = K·W2 = 4·300 = 1200 σπείρες."
+  },
+  {
+    q:"6. Ένας Μ/Σ έχει W1 = 600 σπείρες, W2 = 300 σπείρες και U2 = 110 V. Να βρεθούν K και U1.",
+    fields:[
+      {label:"K =", ans:2},
+      {label:"U1 σε V =", ans:220}
+    ],
+    solution:"K = W1/W2 = 600/300 = 2. Επειδή K = U1/U2, έχουμε U1 = K·U2 = 2·110 = 220 V."
+  }
+];
+
+function normNumber(value){
+  return String(value).trim().replace(",", ".");
+}
+
+function nearlyEqual(a,b){
+  return Math.abs(Number(a)-Number(b)) < 0.0001;
+}
+
+function shuffle(array){
+  const a=[...array];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function renderPartA(){
+  const box=document.getElementById("quizA");
+  box.innerHTML="";
+  questionsA.forEach((item,idx)=>{
+    const q=document.createElement("div");
+    q.className="question";
+    let html=`<p>${item.q}</p>`;
+    item.choices.forEach((choice,cidx)=>{
+      html+=`<label class="option"><input type="radio" name="qa${idx}" value="${cidx}">${choice}</label>`;
+    });
+    q.innerHTML=html;
+    box.appendChild(q);
+  });
+  document.getElementById("keyA").innerHTML="<strong>Λύσεις Μέρους Α:</strong><br>" + questionsA.map((q,i)=>`${i+1}. ${q.choices[q.correct]} — ${q.exp}`).join("<br>");
+}
+
+function checkPartA(){
+  let score=0;
+  questionsA.forEach((q,i)=>{
+    const labels=document.querySelectorAll(`input[name="qa${i}"]`);
+    labels.forEach(input=>{
+      const lab=input.closest("label");
+      lab.classList.remove("correctChoice","wrongChoice");
+      if(Number(input.value)===q.correct) lab.classList.add("correctChoice");
+      if(input.checked && Number(input.value)!==q.correct) lab.classList.add("wrongChoice");
+    });
+    const checked=document.querySelector(`input[name="qa${i}"]:checked`);
+    if(checked && Number(checked.value)===q.correct) score++;
+  });
+  const res=document.getElementById("resultA");
+  res.style.display="block";
+  res.className="result " + (score>=8 ? "ok" : "bad");
+  res.textContent=`Σκορ Μέρους Α: ${score}/${questionsA.length}`;
+}
+
+function resetPartA(){
+  document.querySelectorAll("#quizA input").forEach(i=>i.checked=false);
+  document.querySelectorAll("#quizA label").forEach(l=>l.classList.remove("correctChoice","wrongChoice"));
+  document.getElementById("resultA").style.display="none";
+}
+
+let selectedChip=null;
+
+function renderDrag(){
+  const bank=document.getElementById("bank");
+  bank.innerHTML="";
+  document.querySelectorAll(".dropZone .chips").forEach(z=>z.innerHTML="");
+  shuffle(dragItems).forEach((item,idx)=>{
+    const chip=document.createElement("div");
+    chip.className="chip";
+    chip.draggable=true;
+    chip.textContent=item.text;
+    chip.dataset.correctZone=item.zone;
+    chip.id="chip"+idx+"_"+Math.random().toString(16).slice(2);
+    addChipEvents(chip);
+    bank.appendChild(chip);
+  });
+  document.getElementById("resultB").style.display="none";
+  document.getElementById("keyB").innerHTML = `
+    <strong>Λύσεις Μέρους Β:</strong>
+    <ul>
+      <li><strong>Βασικά μέρη:</strong> πυρήνας, τύλιγμα Υ.Τ., τύλιγμα Χ.Τ., δύο τυλίγματα.</li>
+      <li><strong>Ρόλοι τυλιγμάτων:</strong> πρωτεύον στην πηγή, δευτερεύον δίνει μετασχηματισμένη τάση, σε υποβιβασμό το πρωτεύον είναι Υ.Τ.</li>
+      <li><strong>Χωρίς φορτίο:</strong> δευτερεύον ανοιχτό, δεν τροφοδοτεί κατανάλωση, U2 = E2 περίπου.</li>
+      <li><strong>Με φορτίο:</strong> δευτερεύον σε καταναλωτή, μεγαλύτερο Ι1 από το Ι0, U2 μικρότερη από E2 λόγω πτώσης τάσης.</li>
+      <li><strong>Σχέσεις:</strong> K = U1/U2 = W1/W2, U2 = U1/K.</li>
+    </ul>`;
+}
+
+function addChipEvents(chip){
+  chip.addEventListener("dragstart",e=>{e.dataTransfer.setData("text/plain",chip.id);});
+  chip.addEventListener("click",()=>{
+    if(selectedChip) selectedChip.classList.remove("selected");
+    selectedChip = chip;
+    chip.classList.add("selected");
+  });
+}
+
+function moveSelectedTo(targetContainer){
+  if(selectedChip && targetContainer && targetContainer !== selectedChip.parentElement){
+    targetContainer.appendChild(selectedChip);
+    selectedChip.classList.remove("selected");
+    selectedChip=null;
+  }
+}
+
+function setupDropZones(){
+  const bankList = document.getElementById("bank");
+  const bankBox = document.querySelector(".cardsBank");
+  const zones = document.querySelectorAll(".dropZone");
+
+  function enableTarget(targetElement, listElement){
+    targetElement.addEventListener("dragover", e => {
+      e.preventDefault();
+      const z = targetElement.closest(".dropZone");
+      if(z) z.classList.add("over");
+    });
+
+    targetElement.addEventListener("dragleave", e => {
+      const z = targetElement.closest(".dropZone");
+      if(z && !z.contains(e.relatedTarget)) z.classList.remove("over");
+    });
+
+    targetElement.addEventListener("drop", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = e.dataTransfer.getData("text/plain");
+      const chip = document.getElementById(id);
+      if(chip) listElement.appendChild(chip);
+      const z = targetElement.closest(".dropZone");
+      if(z) z.classList.remove("over");
+    });
+
+    targetElement.addEventListener("click", e => {
+      if(e.target.classList && e.target.classList.contains("chip")) return;
+      moveSelectedTo(listElement);
+    });
+  }
+
+  enableTarget(bankBox, bankList);
+  zones.forEach(zone => {
+    const list = zone.querySelector(".chips");
+    enableTarget(zone, list);
+    enableTarget(list, list);
+  });
+}
+
+function checkDrag(){
+  let total=dragItems.length, score=0;
+  document.querySelectorAll(".chip").forEach(chip=>{
+    chip.classList.remove("good","miss");
+    const parentZone=chip.closest(".dropZone");
+    if(!parentZone){
+      chip.classList.add("miss");
+      return;
+    }
+    if(parentZone.dataset.zone === chip.dataset.correctZone){
+      chip.classList.add("good");
+      score++;
+    } else {
+      chip.classList.add("miss");
+    }
+  });
+  const res=document.getElementById("resultB");
+  res.style.display="block";
+  res.className="result " + (score>=15 ? "ok" : "bad");
+  res.textContent=`Σκορ Μέρους Β: ${score}/${total}`;
+}
+
+function resetDrag(){
+  renderDrag();
+}
+
+function renderCalcs(){
+  const box=document.getElementById("calcGrid");
+  box.innerHTML="";
+  calcs.forEach((c,idx)=>{
+    const div=document.createElement("div");
+    div.className="calc";
+    let html=`<p><strong>${c.q}</strong></p>`;
+    c.fields.forEach((f,j)=>{
+      html+=`<label>${f.label}</label><input type="text" data-calc="${idx}" data-field="${j}" placeholder="Γράψε αριθμό">`;
+    });
+    html+=`<div class="miniResult" id="calcResult${idx}"></div>`;
+    div.innerHTML=html;
+    box.appendChild(div);
+  });
+  document.getElementById("keyC").innerHTML="<strong>Λύσεις Μέρους Γ:</strong><br>" + calcs.map((c,i)=>`${i+1}. ${c.solution}`).join("<br>");
+}
+
+function checkCalcs(){
+  let score=0, total=0;
+  calcs.forEach((c,idx)=>{
+    let localOk=true;
+    c.fields.forEach((f,j)=>{
+      total++;
+      const inp=document.querySelector(`input[data-calc="${idx}"][data-field="${j}"]`);
+      inp.classList.remove("correctChoice","wrongChoice");
+      if(nearlyEqual(normNumber(inp.value), f.ans)){
+        score++;
+        inp.classList.add("correctChoice");
+      } else {
+        localOk=false;
+        inp.classList.add("wrongChoice");
+      }
+    });
+    const res=document.getElementById("calcResult"+idx);
+    res.style.display="block";
+    if(localOk){
+      res.className="miniResult ok";
+      res.textContent="Σωστό!";
+    } else {
+      res.className="miniResult bad";
+      res.textContent="Έλεγξε ξανά. Λύση: " + c.solution;
+    }
+  });
+  const result=document.getElementById("resultC");
+  result.style.display="block";
+  result.className="result " + (score>=8 ? "ok" : "bad");
+  result.textContent=`Σκορ Μέρους Γ: ${score}/${total}`;
+}
+
+function resetCalcs(){
+  document.querySelectorAll("#calcGrid input").forEach(i=>{
+    i.value="";
+    i.classList.remove("correctChoice","wrongChoice");
+  });
+  document.querySelectorAll(".miniResult").forEach(r=>r.style.display="none");
+  document.getElementById("resultC").style.display="none";
+}
+
+function toggleKey(id){
+  const el=document.getElementById(id);
+  el.style.display = el.style.display==="block" ? "none" : "block";
+}
+
+renderPartA();
+renderDrag();
+setupDropZones();
+renderCalcs();
+</script>
+</body>
+</html>
