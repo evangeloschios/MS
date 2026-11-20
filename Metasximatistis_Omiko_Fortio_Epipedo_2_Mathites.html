@@ -1,0 +1,158 @@
+<!DOCTYPE html><html lang="el"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Μετασχηματιστής με ωμικό φορτίο — Επίπεδο 2</title><style>
+:root{--ink:#153047;--muted:#547083;--blue:#115e99;--light:#eaf4fc;--paper:#fff;--bg:#f3f7fb;--line:#d8e3ed;--correct:#116a3d;--wrong:#ad3030;--focus:#1878c0;--yellow:#fff7dd}
+*{box-sizing:border-box}body{font-family:Arial,"Segoe UI",sans-serif;line-height:1.65;background:var(--bg);margin:0;color:var(--ink);font-size:17px}main{max-width:980px;margin:24px auto;padding:0 18px 40px}h1{font-size:clamp(25px,3vw,34px);line-height:1.23;color:#123953;margin:0 0 8px}h2{font-size:23px;margin:0 0 14px}h3{font-size:20px;margin:0}p{margin:8px 0}.eyebrow{font-weight:700;color:var(--blue);font-size:13px;letter-spacing:.08em;text-transform:uppercase}.lead{color:var(--muted);margin:0 0 18px}.sheet{border-radius:15px;background:#fff;padding:24px;box-shadow:0 4px 20px #13364b10;margin:18px 0;border:1px solid var(--line)}.header{border-left:6px solid var(--blue)}.chip{display:inline-block;font-size:13px;font-weight:700;color:#12518a;background:#e6f0f9;padding:5px 11px;border-radius:20px;margin-bottom:12px}.data-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:12px 0 16px}.data{background:#f0f6fc;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}.data .lbl{display:block;font-size:13px;color:var(--muted)}.data .val{font-size:21px;font-weight:700}.note{background:var(--yellow);border:1px solid #f0d88a;border-radius:10px;padding:12px 14px;margin:12px 0}.circuit{width:100%;max-width:680px;height:auto;display:block;margin:15px auto 0}.tasks{display:grid;gap:13px}.step{background:var(--paper);padding:18px 20px 19px;border-radius:14px;border:1px solid var(--line);border-left:5px solid #6ca5c9}.step h3{margin-bottom:8px}.mini{font-size:15px;color:var(--muted)}.formula{font-size:23px;text-align:center;line-height:1.65;margin:11px 0;overflow-x:auto;white-space:nowrap;padding:4px}.formula.small{font-size:20px}.frac{display:inline-flex;vertical-align:middle;flex-flow:column nowrap;text-align:center;line-height:1.14;padding:0 .18em;font-size:.94em}.frac>.num{border-bottom:1.6px solid currentColor;padding:0 .20em .13em}.frac>.den{padding:.13em .20em 0}.answer{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:9px;margin:15px 0 4px}.answer label{font-weight:700;font-size:20px}.answer input{width:155px;min-height:48px;font-size:20px;text-align:center;border:2px solid #a4bacb;border-radius:9px;background:#fff;color:#132c3a}.answer input:focus{outline:3px solid #b4dcf8;border-color:var(--focus)}.answer input.ok{border-color:var(--correct);background:#e8f9ee}.answer input.no{border-color:var(--wrong);background:#fff1ef}.unit{min-width:26px}.tip{background:var(--light);border:1px solid #d0e4f5;padding:10px 12px;border-radius:8px;margin-top:10px}.prompt{margin-top:7px;font-size:15px;color:var(--muted)}.feedback{min-height:24px;text-align:center;font-size:15px;font-weight:700}.feedback.good{color:var(--correct)}.feedback.bad{color:var(--wrong)}button{font:inherit;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;background:#1c669d;color:white;font-weight:700}button:hover{filter:brightness(.94)}button:focus-visible{outline:3px solid #90c9f0;outline-offset:3px}.secondary{color:var(--blue);background:#e5f1fb}.controls{display:flex;flex-wrap:wrap;gap:11px;margin:15px 0}.result{padding:13px;border-radius:10px;margin-top:12px;background:#e9f4fa;font-weight:700}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.power{background:#f0f6fc;border:1px solid var(--line);padding:15px 10px;border-radius:12px;text-align:center}.power b{font-size:23px;display:block;margin-top:6px}.power span{color:var(--muted);font-size:14px}details{border:1px solid var(--line);border-radius:10px;padding:10px 13px;background:#fff;margin:9px 0}details summary{cursor:pointer;font-weight:700}ol{padding-left:25px}.printname{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;font-size:15px}.printname>span{flex:1;min-width:180px;border-bottom:1px solid #8999a4;min-height:32px}.status{font-weight:700;color:var(--correct)}.hidden{display:none}.toplinks{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}a{color:var(--blue)}@media(max-width:680px){.sheet{padding:17px}.data-grid{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:1fr}.step{padding:15px}.formula{font-size:21px}.circuit{max-width:100%}}@media print{body{background:#fff;font-size:15px}main{margin:0;max-width:none;padding:0}.sheet,.step{box-shadow:none;border:1px solid #bbb;break-inside:avoid}.header{border-left:5px solid #888}.sheet{padding:14px;margin:9px 0}.step{padding:10px 12px}.controls,button,.feedback,.result,.toplinks{display:none!important}details:not([open]){display:none}input{width:100px!important;min-height:30px!important;background:white!important;border:1px solid #777!important}.formula{font-size:20px}.data-grid{gap:6px}.chip{border:1px solid #aaa}.circuit{max-height:160px}}
+
+
+/* Differentiated lesson levels */
+.progress-ribbon{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:15px 0 5px}
+.step-pill{padding:4px 11px;border-radius:18px;font-weight:700;font-size:14px;border:1px solid #b5cddf;background:#f8fbfd;color:#346179}
+.step-pill.current{background:#115e99;color:white;border-color:#115e99}
+.select-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:11px 0}
+.choice{display:flex;align-items:center;justify-content:flex-start;gap:8px;min-height:70px;padding:10px 9px;border:1.5px solid #bdd0df;border-radius:10px;cursor:pointer;background:#fcfeff;font-size:20px;line-height:1.4}
+.choice:has(input:checked){background:#eaf4fc;border-color:#1974b0;box-shadow:0 0 0 1px #1974b0}
+.choice:has(input:focus-visible){outline:3px solid #a5d7f6;outline-offset:2px}
+.choice input{width:19px;height:19px;flex:0 0 auto;accent-color:#146ca7}
+.choice.ok{border-color:#198452;background:#e8faed}.choice.no{border-color:#c64c4c;background:#fff0ef}
+.part-title{font-size:14px;text-transform:uppercase;letter-spacing:.045em;font-weight:700;color:#547083;margin:14px 0 3px}
+.fill-equation{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin:12px 0 9px;font-size:21px;font-weight:700}
+.frac.slot-frac{padding:0 .12em;min-width:105px}
+.frac .num,.frac .den{display:block}
+.slot,.end-result{width:94px;padding:7px 8px;height:45px;border:2px solid #aac0d0;border-radius:8px;background:white;color:#123047;font-size:19px;text-align:center}
+.end-result{width:116px}
+.slot:focus,.end-result:focus,.working:focus{outline:3px solid #b4dcf8;border-color:#1878c0}
+.slot.ok,.end-result.ok{border-color:#198452;background:#e8faed}
+.slot.no,.end-result.no{border-color:#b84444;background:#fff0ef}
+.formula-msg{color:#ad3030;font-size:15px;margin:6px 0;min-height:21px}
+.check-feedback{margin:8px 0 0;font-size:15px;font-weight:bold;color:#547083;min-height:20px}
+.working{width:100%;min-height:95px;border:2px solid #b2c4d1;border-radius:10px;padding:12px;font:17px/1.5 Arial,'Segoe UI',sans-serif;resize:vertical;color:#123047}
+.wide-answer{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:11px}
+.wide-answer label{font-size:20px;font-weight:bold}
+.help-card{background:#f0f6fc;padding:12px;border-radius:10px;border:1px solid var(--line);margin:12px 0}
+.ref-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.ref-cell{padding:10px;border:1px solid var(--line);background:#fff;border-radius:8px;text-align:center;font-size:21px}
+.center{text-align:center}.self-check{display:flex;gap:14px;flex-wrap:wrap}.self-check label{display:flex;align-items:center;gap:8px}.self-check input{width:19px;height:19px}
+.instruction-accent{border-left:4px solid #2479b0;padding:8px 11px;background:#eaf4fc;margin:13px 0;border-radius:5px}
+.two-column{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.divider-light{height:1px;background:var(--line);margin:13px 0}
+@media(max-width:720px){.select-grid{grid-template-columns:1fr}.choice{min-height:60px}.two-column{grid-template-columns:1fr}.ref-grid{grid-template-columns:1fr}.fill-equation{font-size:19px}.slot{width:72px}.frac.slot-frac{min-width:78px}}
+@media print{.select-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.choice{font-size:16px;min-height:50px;padding:4px}.choice input{width:14px;height:14px}.ref-grid{grid-template-columns:repeat(2,1fr)}.working{min-height:90px}.slot,.end-result{height:27px!important;width:67px!important;font-size:14px}.fill-equation{font-size:18px}.check-feedback,.formula-msg{display:none!important}.progress-ribbon{display:none}details:not([open]){display:none!important}}
+</style></head><body><main><section class="sheet header">
+<div class="eyebrow">Ηλεκτρικές Μηχανές · Γ΄ ΕΠΑΛ</div>
+<h1>Μετασχηματιστής με ωμικό φορτίο</h1>
+<div class="chip">Επίπεδο 2 — Μερική καθοδήγηση</div>
+<p class="lead">Στην πρώτη άσκηση ήταν ήδη δοσμένοι ο τύπος και οι αριθμοί. Τώρα επιλέγεις εσύ τον τύπο, τοποθετείς τα γνωστά στοιχεία και υπολογίζεις το αποτέλεσμα. Η βοήθεια ανοίγει μόνο αν τη χρειαστείς.</p>
+<div class="progress-ribbon"><span class="step-pill">1 · Πλήρης βοήθεια</span><span class="step-pill current">2 · Μερική βοήθεια</span><span class="step-pill ">3 · Χωρίς υποδείξεις</span></div>
+<div class="printname"><strong>Ονοματεπώνυμο:</strong><span></span><strong>Τμήμα:</strong><span></span></div>
+</section><section class="sheet">
+<h2>Εκφώνηση</h2>
+<p>Ένας <strong>ιδανικός μονοφασικός μετασχηματιστής</strong> τροφοδοτεί στο δευτερεύον του μία <strong>καθαρά ωμική αντίσταση</strong>. Να υπολογίσετε τα επτά ζητούμενα.</p>
+<div class="data-grid">
+<div class="data"><span class="lbl">Τάση πρωτεύοντος</span><span class="val">U₁ = 450 V</span></div>
+<div class="data"><span class="lbl">Σπείρες πρωτεύοντος</span><span class="val">W₁ = 1200</span></div>
+<div class="data"><span class="lbl">Σπείρες δευτερεύοντος</span><span class="val">W₂ = 400</span></div>
+<div class="data"><span class="lbl">Ωμική αντίσταση</span><span class="val">R = 10 Ω</span></div>
+</div>
+<svg aria-label="Κύκλωμα: πηγή εναλλασσόμενης τάσης 450 V στο πρωτεύον, δύο πηνία με κοινό πυρήνα, και ωμική αντίσταση R 10 Ω συνδεδεμένη στο δευτερεύον." class="circuit" role="img" viewbox="0 0 680 194">
+<g fill="none" stroke="#16445d" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5">
+<path d="M78 54 H167 V66 M167 129 V143 H78 V123"></path><path d="M78 54 V73 M78 123 V143"></path>
+<circle cx="78" cy="98" r="25"></circle><path d="M61 98 Q69 82 78 98 T95 98" stroke="#2385b9"></path>
+<path d="M167 66 C140 66 140 78 167 78 C140 78 140 90 167 90 C140 90 140 102 167 102 C140 102 140 114 167 114 C140 114 140 126 167 126 L167 129"></path>
+<path d="M233 49 V146 M242 49 V146" stroke="#607f96" stroke-width="5"></path>
+<path d="M307 66 C334 66 334 78 307 78 C334 78 334 90 307 90 C334 90 334 102 307 102 C334 102 334 114 307 114 C334 114 334 126 307 126 L307 129"></path>
+<path d="M307 66 V54 H550 V72 M307 129 V143 H550 V121"></path>
+<rect fill="#fff8e2" height="49" width="34" x="533" y="72"></rect>
+<path d="M540 81 L560 88 L540 95 L560 102 L540 110" stroke="#bd711b" stroke-width="1.8"></path>
+<path d="M401 48 H456" stroke="#217f9f"></path><path d="M447 42 L457 48 L447 54" stroke="#217f9f"></path>
+</g>
+<g fill="#173e54" font-family="Arial,sans-serif" font-size="18" text-anchor="middle">
+<text x="78" y="29">U₁ = 450 V</text><text x="168" y="170">W₁ = 1200</text><text x="305" y="170">W₂ = 400</text><text x="430" y="38">I₂</text><text x="550" y="56">R = 10 Ω</text><text x="426" y="168">U₂ = ?</text>
+</g>
+</svg>
+<p><strong>Ζητούνται:</strong> α) Κ, β) U₂, γ) I₂, δ) I₁, ε) S₂, στ) P₂, ζ) Q₂.</p>
+<div class="note"><strong>Δεδομένο από τη φύση του φορτίου:</strong> Καθαρά ωμική αντίσταση ⇒ φ = 0°, <strong>συνφ = 1</strong> και <strong>ημφ = 0</strong>. Οι τιμές αυτές δεν χρειάζεται να υπολογιστούν.</div>
+</section><section class="sheet"><h2>Οδηγίες εργασίας</h2><ol><li>Διάβασε τι ζητείται σε κάθε βήμα.</li><li>Επίλεξε έναν από τους τρεις τύπους.</li><li>Συμπλήρωσε <strong>όλα</strong> τα αριθμητικά κενά, μαζί με το τελικό αποτέλεσμα.</li><li>Έλεγξε και διόρθωσε, όπου χρειάζεται.</li></ol><div class="instruction-accent"><strong>Προσοχή:</strong> Οι τύποι δεν έχουν έτοιμη αντικατάσταση. Τα κλάσματα διαβάζονται με αριθμητή επάνω και παρονομαστή κάτω.</div></section><div class="tasks" id="tasks"><section class="step exercise" data-correct="0">
+<h3>Βήμα 1 · Υπολόγισε τον λόγο μεταφοράς (K)</h3>
+<div class="part-title">Α. Διάλεξε τον κατάλληλο τύπο</div>
+<div class="select-grid" role="radiogroup" aria-label="Επιλογή τύπου για K"><label class="choice"><input type="radio" name="form-1" value="0" aria-label="Τύπος 1"/><span>K = <span class="frac"><span class="num">W₁</span><span class="den">W₂</span></span></span></label><label class="choice"><input type="radio" name="form-1" value="1" aria-label="Τύπος 2"/><span>K = <span class="frac"><span class="num">W₂</span><span class="den">W₁</span></span></span></label><label class="choice"><input type="radio" name="form-1" value="2" aria-label="Τύπος 3"/><span>K = W₁ · W₂</span></label></div>
+<div class="formula-msg" aria-live="polite"></div>
+<div class="part-title">Β. Συμπλήρωσε μόνος σου την αντικατάσταση και το αποτέλεσμα</div>
+<div class="fill-equation">K = <span class="frac slot-frac"><span class="num"><input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="1200" aria-label="K: αριθμός 1" placeholder="?"></span><span class="den"><input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="400" aria-label="K: αριθμός 2" placeholder="?"></span></span> = <input type="text" inputmode="decimal" autocomplete="off" class="end-result" data-expected="3" aria-label="K: αποτέλεσμα" placeholder="?"> <span class="unit"></span></div>
+<div class="check-feedback" aria-live="polite"></div>
+<details><summary>💡 Μικρή βοήθεια — μόνο αν τη χρειάζεσαι</summary><div class="tip">Σκέψου: Ποια σπείρα βρίσκεται στον αριθμητή και ποια στον παρονομαστή;</div></details>
+</section><section class="step exercise" data-correct="1">
+<h3>Βήμα 2 · Υπολόγισε την τάση δευτερεύοντος (U₂)</h3>
+<div class="part-title">Α. Διάλεξε τον κατάλληλο τύπο</div>
+<div class="select-grid" role="radiogroup" aria-label="Επιλογή τύπου για U₂"><label class="choice"><input type="radio" name="form-2" value="0" aria-label="Τύπος 1"/><span>U₂ = U₁ · K</span></label><label class="choice"><input type="radio" name="form-2" value="1" aria-label="Τύπος 2"/><span>U₂ = <span class="frac"><span class="num">U₁</span><span class="den">K</span></span></span></label><label class="choice"><input type="radio" name="form-2" value="2" aria-label="Τύπος 3"/><span>U₂ = <span class="frac"><span class="num">K</span><span class="den">U₁</span></span></span></label></div>
+<div class="formula-msg" aria-live="polite"></div>
+<div class="part-title">Β. Συμπλήρωσε μόνος σου την αντικατάσταση και το αποτέλεσμα</div>
+<div class="fill-equation">U₂ = <span class="frac slot-frac"><span class="num"><input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="450" aria-label="U₂: αριθμός 1" placeholder="?"></span><span class="den"><input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="3" aria-label="U₂: αριθμός 2" placeholder="?"></span></span> = <input type="text" inputmode="decimal" autocomplete="off" class="end-result" data-expected="150" aria-label="U₂: αποτέλεσμα" placeholder="?"> <span class="unit">V</span></div>
+<div class="check-feedback" aria-live="polite"></div>
+<details><summary>💡 Μικρή βοήθεια — μόνο αν τη χρειάζεσαι</summary><div class="tip">Η τάση που αναζητάς βρίσκεται στον παρονομαστή της αρχικής σχέσης μεταφοράς.</div></details>
+</section><section class="step exercise" data-correct="0">
+<h3>Βήμα 3 · Υπολόγισε την ένταση δευτερεύοντος (I₂)</h3>
+<div class="part-title">Α. Διάλεξε τον κατάλληλο τύπο</div>
+<div class="select-grid" role="radiogroup" aria-label="Επιλογή τύπου για I₂"><label class="choice"><input type="radio" name="form-3" value="0" aria-label="Τύπος 1"/><span>I₂ = <span class="frac"><span class="num">U₂</span><span class="den">R</span></span></span></label><label class="choice"><input type="radio" name="form-3" value="1" aria-label="Τύπος 2"/><span>I₂ = <span class="frac"><span class="num">R</span><span class="den">U₂</span></span></span></label><label class="choice"><input type="radio" name="form-3" value="2" aria-label="Τύπος 3"/><span>I₂ = U₂ · R</span></label></div>
+<div class="formula-msg" aria-live="polite"></div>
+<div class="part-title">Β. Συμπλήρωσε μόνος σου την αντικατάσταση και το αποτέλεσμα</div>
+<div class="fill-equation">I₂ = <span class="frac slot-frac"><span class="num"><input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="150" aria-label="I₂: αριθμός 1" placeholder="?"></span><span class="den"><input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="10" aria-label="I₂: αριθμός 2" placeholder="?"></span></span> = <input type="text" inputmode="decimal" autocomplete="off" class="end-result" data-expected="15" aria-label="I₂: αποτέλεσμα" placeholder="?"> <span class="unit">A</span></div>
+<div class="check-feedback" aria-live="polite"></div>
+<details><summary>💡 Μικρή βοήθεια — μόνο αν τη χρειάζεσαι</summary><div class="tip">Το ωμικό φορτίο συνδέεται στο δευτερεύον. Ποια τιμή τάσης χρειάζεται ο νόμος του Ohm;</div></details>
+</section><section class="step exercise" data-correct="2">
+<h3>Βήμα 4 · Υπολόγισε την ένταση πρωτεύοντος (I₁)</h3>
+<div class="part-title">Α. Διάλεξε τον κατάλληλο τύπο</div>
+<div class="select-grid" role="radiogroup" aria-label="Επιλογή τύπου για I₁"><label class="choice"><input type="radio" name="form-4" value="0" aria-label="Τύπος 1"/><span>I₁ = I₂ · K</span></label><label class="choice"><input type="radio" name="form-4" value="1" aria-label="Τύπος 2"/><span>I₁ = <span class="frac"><span class="num">K</span><span class="den">I₂</span></span></span></label><label class="choice"><input type="radio" name="form-4" value="2" aria-label="Τύπος 3"/><span>I₁ = <span class="frac"><span class="num">I₂</span><span class="den">K</span></span></span></label></div>
+<div class="formula-msg" aria-live="polite"></div>
+<div class="part-title">Β. Συμπλήρωσε μόνος σου την αντικατάσταση και το αποτέλεσμα</div>
+<div class="fill-equation">I₁ = <span class="frac slot-frac"><span class="num"><input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="15" aria-label="I₁: αριθμός 1" placeholder="?"></span><span class="den"><input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="3" aria-label="I₁: αριθμός 2" placeholder="?"></span></span> = <input type="text" inputmode="decimal" autocomplete="off" class="end-result" data-expected="5" aria-label="I₁: αποτέλεσμα" placeholder="?"> <span class="unit">A</span></div>
+<div class="check-feedback" aria-live="polite"></div>
+<details><summary>💡 Μικρή βοήθεια — μόνο αν τη χρειάζεσαι</summary><div class="tip">Η σχέση μεταφοράς ρευμάτων έχει το I₂ στον αριθμητή. Αναζητάς το I₁.</div></details>
+</section><section class="step exercise" data-correct="1">
+<h3>Βήμα 5 · Υπολόγισε τη φαινόμενη ισχύ (S₂)</h3>
+<div class="part-title">Α. Διάλεξε τον κατάλληλο τύπο</div>
+<div class="select-grid" role="radiogroup" aria-label="Επιλογή τύπου για S₂"><label class="choice"><input type="radio" name="form-5" value="0" aria-label="Τύπος 1"/><span>S₂ = U₂ + I₂</span></label><label class="choice"><input type="radio" name="form-5" value="1" aria-label="Τύπος 2"/><span>S₂ = U₂ · I₂</span></label><label class="choice"><input type="radio" name="form-5" value="2" aria-label="Τύπος 3"/><span>S₂ = U₁ · I₂</span></label></div>
+<div class="formula-msg" aria-live="polite"></div>
+<div class="part-title">Β. Συμπλήρωσε μόνος σου την αντικατάσταση και το αποτέλεσμα</div>
+<div class="fill-equation">S₂ = <input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="150" aria-label="S₂: αριθμός 1" placeholder="?"> · <input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="15" aria-label="S₂: αριθμός 2" placeholder="?"> = <input type="text" inputmode="decimal" autocomplete="off" class="end-result" data-expected="2250" aria-label="S₂: αποτέλεσμα" placeholder="?"> <span class="unit">VA</span></div>
+<div class="check-feedback" aria-live="polite"></div>
+<details><summary>💡 Μικρή βοήθεια — μόνο αν τη χρειάζεσαι</summary><div class="tip">Για τη φαινόμενη ισχύ χρειάζεσαι την τάση και την ένταση του ίδιου τυλίγματος.</div></details>
+</section><section class="step exercise" data-correct="0">
+<h3>Βήμα 6 · Υπολόγισε την πραγματική ισχύ (P₂)</h3>
+<div class="part-title">Α. Διάλεξε τον κατάλληλο τύπο</div>
+<div class="select-grid" role="radiogroup" aria-label="Επιλογή τύπου για P₂"><label class="choice"><input type="radio" name="form-6" value="0" aria-label="Τύπος 1"/><span>P₂ = U₂ · I₂ · συνφ</span></label><label class="choice"><input type="radio" name="form-6" value="1" aria-label="Τύπος 2"/><span>P₂ = U₂ · I₂ · ημφ</span></label><label class="choice"><input type="radio" name="form-6" value="2" aria-label="Τύπος 3"/><span>P₂ = U₂ + I₂ · συνφ</span></label></div>
+<div class="formula-msg" aria-live="polite"></div>
+<div class="part-title">Β. Συμπλήρωσε μόνος σου την αντικατάσταση και το αποτέλεσμα</div>
+<div class="fill-equation">P₂ = <input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="150" aria-label="P₂: αριθμός 1" placeholder="?"> · <input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="15" aria-label="P₂: αριθμός 2" placeholder="?"> · <input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="1" aria-label="P₂: αριθμός 3" placeholder="?"> = <input type="text" inputmode="decimal" autocomplete="off" class="end-result" data-expected="2250" aria-label="P₂: αποτέλεσμα" placeholder="?"> <span class="unit">W</span></div>
+<div class="check-feedback" aria-live="polite"></div>
+<details><summary>💡 Μικρή βοήθεια — μόνο αν τη χρειάζεσαι</summary><div class="tip">Η πραγματική ισχύς χρησιμοποιεί το συνφ. Σε ωμική αντίσταση η τιμή του είναι 1.</div></details>
+</section><section class="step exercise" data-correct="1">
+<h3>Βήμα 7 · Υπολόγισε την άεργο ισχύ (Q₂)</h3>
+<div class="part-title">Α. Διάλεξε τον κατάλληλο τύπο</div>
+<div class="select-grid" role="radiogroup" aria-label="Επιλογή τύπου για Q₂"><label class="choice"><input type="radio" name="form-7" value="0" aria-label="Τύπος 1"/><span>Q₂ = U₂ · I₂ · συνφ</span></label><label class="choice"><input type="radio" name="form-7" value="1" aria-label="Τύπος 2"/><span>Q₂ = U₂ · I₂ · ημφ</span></label><label class="choice"><input type="radio" name="form-7" value="2" aria-label="Τύπος 3"/><span>Q₂ = <span class="frac"><span class="num">I₂</span><span class="den">R</span></span></span></label></div>
+<div class="formula-msg" aria-live="polite"></div>
+<div class="part-title">Β. Συμπλήρωσε μόνος σου την αντικατάσταση και το αποτέλεσμα</div>
+<div class="fill-equation">Q₂ = <input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="150" aria-label="Q₂: αριθμός 1" placeholder="?"> · <input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="15" aria-label="Q₂: αριθμός 2" placeholder="?"> · <input type="text" inputmode="decimal" autocomplete="off" class="slot" data-expected="0" aria-label="Q₂: αριθμός 3" placeholder="?"> = <input type="text" inputmode="decimal" autocomplete="off" class="end-result" data-expected="0" aria-label="Q₂: αποτέλεσμα" placeholder="?"> <span class="unit">var</span></div>
+<div class="check-feedback" aria-live="polite"></div>
+<details><summary>💡 Μικρή βοήθεια — μόνο αν τη χρειάζεσαι</summary><div class="tip">Η άεργος ισχύς χρησιμοποιεί το ημφ. Σε ωμική αντίσταση η τιμή του είναι 0.</div></details>
+</section></div><section class="sheet"><h2>Αυτοέλεγχος</h2><div class="controls"><button type="button" id="check">✓ Έλεγχος απαντήσεων</button><button type="button" id="reset" class="secondary">↺ Νέα προσπάθεια</button><button type="button" id="print" class="secondary">⎙ Εκτύπωση</button></div><div id="score" class="result hidden" role="status" aria-live="polite"></div><div class="note"><strong>Θυμάμαι:</strong> Για καθαρά ωμικό φορτίο, συνφ = 1 και ημφ = 0. Επομένως η πραγματική και η φαινόμενη ισχύς είναι αριθμητικά ίσες, ενώ η άεργος ισχύς είναι μηδέν.</div></section>
+<p class="mini">Το αρχείο λειτουργεί χωρίς σύνδεση στο διαδίκτυο. Δεν αποθηκεύει και δεν αποστέλλει απαντήσεις σε εξωτερική υπηρεσία.</p></main><script>(function(){'use strict';
+const steps=[...document.querySelectorAll('.exercise')], score=document.getElementById('score');
+const number=s=>{let t=String(s).trim().replace(/\s/g,'').replace(',','.');return /^[-+]?\d+(?:\.\d+)?$/.test(t)?Number(t):null;};
+function check(){let formulas=0,nums=0,total=0;
+steps.forEach(step=>{
+const expected=String(step.dataset.correct),checked=step.querySelector('input[type="radio"]:checked'),ok=checked&&checked.value===expected;
+step.querySelectorAll('.choice').forEach(c=>c.classList.remove('ok','no'));
+const msg=step.querySelector('.formula-msg');
+if(ok){formulas++;checked.closest('.choice').classList.add('ok');msg.textContent='Σωστή επιλογή τύπου.';msg.style.color='#116a3d';}
+else if(checked){checked.closest('.choice').classList.add('no');msg.textContent='Δοκίμασε άλλον τύπο.';msg.style.color='#ad3030';}
+else{msg.textContent='Δεν έχεις διαλέξει τύπο.';msg.style.color='#ad3030';}
+let numericLocal=0, fields=[...step.querySelectorAll('input[data-expected]')];
+fields.forEach(field=>{let v=number(field.value),good=v!==null&&v===Number(field.dataset.expected);total++;
+field.classList.remove('ok','no');field.classList.add(good?'ok':'no');if(good){nums++;numericLocal++;}});
+step.querySelector('.check-feedback').textContent=`Αριθμητικά κενά: ${numericLocal} από ${fields.length} σωστά.`;
+});
+score.classList.remove('hidden');score.textContent=`Σωστοί τύποι: ${formulas} από 7. Σωστές αριθμητικές συμπληρώσεις: ${nums} από ${total}. `+(formulas===7&&nums===total?'Ολοκλήρωσες την άσκηση!':'Έλεγξε τα πεδία με το κόκκινο περίγραμμα και προσπάθησε ξανά.');
+}
+function reset(){if(!confirm('Θέλεις να καθαρίσουν όλες οι απαντήσεις σου;'))return;
+steps.forEach(step=>{step.querySelectorAll('input').forEach(input=>{if(input.type==='radio')input.checked=false;else input.value='';input.classList.remove('ok','no')});step.querySelectorAll('.choice').forEach(x=>x.classList.remove('ok','no'));step.querySelector('.formula-msg').textContent='';step.querySelector('.check-feedback').textContent='';step.querySelectorAll('details').forEach(x=>x.open=false)});score.classList.add('hidden');}
+document.getElementById('check').addEventListener('click',check);document.getElementById('reset').addEventListener('click',reset);document.getElementById('print').addEventListener('click',()=>window.print());
+document.querySelectorAll('input').forEach(x=>x.addEventListener('input',()=>{x.classList.remove('ok','no');score.classList.add('hidden')}));
+})();</script></body></html>

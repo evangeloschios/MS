@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Μετασχηματιστής με ωμικό φορτίο — Επίπεδο 1</title>
+<style>
+:root{--ink:#153047;--muted:#547083;--blue:#115e99;--light:#eaf4fc;--paper:#fff;--bg:#f3f7fb;--line:#d8e3ed;--correct:#116a3d;--wrong:#ad3030;--focus:#1878c0;--yellow:#fff7dd}
+*{box-sizing:border-box}body{font-family:Arial,"Segoe UI",sans-serif;line-height:1.65;background:var(--bg);margin:0;color:var(--ink);font-size:17px}main{max-width:980px;margin:24px auto;padding:0 18px 40px}h1{font-size:clamp(25px,3vw,34px);line-height:1.23;color:#123953;margin:0 0 8px}h2{font-size:23px;margin:0 0 14px}h3{font-size:20px;margin:0}p{margin:8px 0}.eyebrow{font-weight:700;color:var(--blue);font-size:13px;letter-spacing:.08em;text-transform:uppercase}.lead{color:var(--muted);margin:0 0 18px}.sheet{border-radius:15px;background:#fff;padding:24px;box-shadow:0 4px 20px #13364b10;margin:18px 0;border:1px solid var(--line)}.header{border-left:6px solid var(--blue)}.chip{display:inline-block;font-size:13px;font-weight:700;color:#12518a;background:#e6f0f9;padding:5px 11px;border-radius:20px;margin-bottom:12px}.data-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:12px 0 16px}.data{background:#f0f6fc;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}.data .lbl{display:block;font-size:13px;color:var(--muted)}.data .val{font-size:21px;font-weight:700}.note{background:var(--yellow);border:1px solid #f0d88a;border-radius:10px;padding:12px 14px;margin:12px 0}.circuit{width:100%;max-width:680px;height:auto;display:block;margin:15px auto 0}.tasks{display:grid;gap:13px}.step{background:var(--paper);padding:18px 20px 19px;border-radius:14px;border:1px solid var(--line);border-left:5px solid #6ca5c9}.step h3{margin-bottom:8px}.mini{font-size:15px;color:var(--muted)}.formula{font-size:23px;text-align:center;line-height:1.65;margin:11px 0;overflow-x:auto;white-space:nowrap;padding:4px}.formula.small{font-size:20px}.frac{display:inline-flex;vertical-align:middle;flex-flow:column nowrap;text-align:center;line-height:1.14;padding:0 .18em;font-size:.94em}.frac>.num{border-bottom:1.6px solid currentColor;padding:0 .20em .13em}.frac>.den{padding:.13em .20em 0}.answer{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:9px;margin:15px 0 4px}.answer label{font-weight:700;font-size:20px}.answer input{width:155px;min-height:48px;font-size:20px;text-align:center;border:2px solid #a4bacb;border-radius:9px;background:#fff;color:#132c3a}.answer input:focus{outline:3px solid #b4dcf8;border-color:var(--focus)}.answer input.ok{border-color:var(--correct);background:#e8f9ee}.answer input.no{border-color:var(--wrong);background:#fff1ef}.unit{min-width:26px}.tip{background:var(--light);border:1px solid #d0e4f5;padding:10px 12px;border-radius:8px;margin-top:10px}.prompt{margin-top:7px;font-size:15px;color:var(--muted)}.feedback{min-height:24px;text-align:center;font-size:15px;font-weight:700}.feedback.good{color:var(--correct)}.feedback.bad{color:var(--wrong)}button{font:inherit;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;background:#1c669d;color:white;font-weight:700}button:hover{filter:brightness(.94)}button:focus-visible{outline:3px solid #90c9f0;outline-offset:3px}.secondary{color:var(--blue);background:#e5f1fb}.controls{display:flex;flex-wrap:wrap;gap:11px;margin:15px 0}.result{padding:13px;border-radius:10px;margin-top:12px;background:#e9f4fa;font-weight:700}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.power{background:#f0f6fc;border:1px solid var(--line);padding:15px 10px;border-radius:12px;text-align:center}.power b{font-size:23px;display:block;margin-top:6px}.power span{color:var(--muted);font-size:14px}details{border:1px solid var(--line);border-radius:10px;padding:10px 13px;background:#fff;margin:9px 0}details summary{cursor:pointer;font-weight:700}ol{padding-left:25px}.printname{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;font-size:15px}.printname>span{flex:1;min-width:180px;border-bottom:1px solid #8999a4;min-height:32px}.status{font-weight:700;color:var(--correct)}.hidden{display:none}.toplinks{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}a{color:var(--blue)}@media(max-width:680px){.sheet{padding:17px}.data-grid{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:1fr}.step{padding:15px}.formula{font-size:21px}.circuit{max-width:100%}}@media print{body{background:#fff;font-size:15px}main{margin:0;max-width:none;padding:0}.sheet,.step{box-shadow:none;border:1px solid #bbb;break-inside:avoid}.header{border-left:5px solid #888}.sheet{padding:14px;margin:9px 0}.step{padding:10px 12px}.controls,button,.feedback,.result,.toplinks{display:none!important}details:not([open]){display:none}input{width:100px!important;min-height:30px!important;background:white!important;border:1px solid #777!important}.formula{font-size:20px}.data-grid{gap:6px}.chip{border:1px solid #aaa}.circuit{max-height:160px}}
+</style>
+</head>
+<body>
+<main>
+  <section class="sheet header">
+    <div class="eyebrow">Ηλεκτρικές Μηχανές · Γ΄ ΕΠΑΛ</div>
+    <h1>Μετασχηματιστής με ωμικό φορτίο</h1>
+    <div class="chip">Επίπεδο 1 — Πλήρης καθοδήγηση</div>
+    <p class="lead">Μία άσκηση σε 7 πολύ μικρά βήματα. Σε κάθε βήμα βλέπεις τον τύπο, την αντικατάσταση των αριθμών και μια βοήθεια. Συμπληρώνεις μόνο το αποτέλεσμα.</p>
+    <div class="printname"><strong>Ονοματεπώνυμο:</strong><span></span><strong>Τμήμα:</strong><span></span></div>
+  </section>
+  <section class="sheet">
+    <h2>Εκφώνηση</h2>
+    <p>Ένας <strong>ιδανικός μονοφασικός μετασχηματιστής</strong> τροφοδοτεί στο δευτερεύον του μία <strong>καθαρά ωμική αντίσταση</strong>.</p>
+    <div class="data-grid">
+      <div class="data"><span class="lbl">Τάση πρωτεύοντος</span><span class="val">U₁ = 240 V</span></div>
+      <div class="data"><span class="lbl">Σπείρες πρωτεύοντος</span><span class="val">W₁ = 800</span></div>
+      <div class="data"><span class="lbl">Σπείρες δευτερεύοντος</span><span class="val">W₂ = 400</span></div>
+      <div class="data"><span class="lbl">Ωμική αντίσταση</span><span class="val">R = 30 Ω</span></div>
+    </div>
+    <svg class="circuit" viewBox="0 0 680 194" role="img" aria-label="Κύκλωμα: πηγή εναλλασσόμενης τάσης 240 V στο πρωτεύον, δύο πηνία με κοινό πυρήνα, και ωμική αντίσταση R 30 Ω συνδεδεμένη στο δευτερεύον.">
+      <g fill="none" stroke="#16445d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M78 54 H167 V66 M167 129 V143 H78 V123"/><path d="M78 54 V73 M78 123 V143"/>
+        <circle cx="78" cy="98" r="25"/><path d="M61 98 Q69 82 78 98 T95 98" stroke="#2385b9"/>
+        <path d="M167 66 C140 66 140 78 167 78 C140 78 140 90 167 90 C140 90 140 102 167 102 C140 102 140 114 167 114 C140 114 140 126 167 126 L167 129"/>
+        <path d="M233 49 V146 M242 49 V146" stroke-width="5" stroke="#607f96"/>
+        <path d="M307 66 C334 66 334 78 307 78 C334 78 334 90 307 90 C334 90 334 102 307 102 C334 102 334 114 307 114 C334 114 334 126 307 126 L307 129"/>
+        <path d="M307 66 V54 H550 V72 M307 129 V143 H550 V121"/>
+        <rect x="533" y="72" width="34" height="49" fill="#fff8e2"/>
+        <path d="M540 81 L560 88 L540 95 L560 102 L540 110" stroke="#bd711b" stroke-width="1.8"/>
+        <path d="M401 48 H456" stroke="#217f9f"/><path d="M447 42 L457 48 L447 54" stroke="#217f9f"/>
+      </g>
+      <g fill="#173e54" font-family="Arial,sans-serif" font-size="18" text-anchor="middle">
+        <text x="78" y="29">U₁ = 240 V</text><text x="168" y="170">W₁ = 800</text><text x="305" y="170">W₂ = 400</text><text x="430" y="38">I₂</text><text x="550" y="56">R = 30 Ω</text><text x="426" y="168">U₂ = ?</text>
+      </g>
+    </svg>
+    <p><strong>Να υπολογίσετε:</strong> α) τον λόγο μεταφοράς K, β) την τάση δευτερεύοντος U₂, γ) τις εντάσεις I₂ και I₁, δ) τη φαινόμενη ισχύ S₂, ε) την πραγματική ισχύ P₂, στ) την άεργο ισχύ Q₂.</p>
+    <div class="note"><strong>Θυμάμαι:</strong> Το φορτίο είναι <strong>καθαρά ωμικό</strong>. Επομένως φ = 0°, <strong>συνφ = 1</strong> και <strong>ημφ = 0</strong>. Οι τιμές αυτές θα χρησιμοποιηθούν στους υπολογισμούς ισχύος.</div>
+  </section>
+  <section class="sheet">
+    <h2>Πώς δουλεύω</h2>
+    <ol>
+      <li>Διαβάζω τον τίτλο του βήματος.</li>
+      <li>Παρατηρώ τον τύπο και τους αριθμούς που έχουν ήδη μπει στη θέση των γραμμάτων.</li>
+      <li>Κάνω τη <strong>μία πράξη</strong> που απομένει.</li>
+      <li>Γράφω το αποτέλεσμα στο πλαίσιο. Πατώ <strong>Έλεγχος</strong> για να δω τι έκανα σωστά.</li>
+    </ol>
+    <p class="mini">Τα κλάσματα εμφανίζονται με τον αριθμητή επάνω και τον παρονομαστή κάτω. Δεν απαιτείται σύνδεση στο διαδίκτυο.</p>
+  </section>
+  <div class="tasks" id="tasks">
+    <section class="step" data-answer="2">
+      <h3>Βήμα 1 · Βρίσκω τον λόγο μεταφοράς Κ</h3>
+      <p>Χρησιμοποιώ τις σπείρες πρωτεύοντος και δευτερεύοντος.</p>
+      <div class="formula">K = <span class="frac" aria-label="W1 διά W2"><span class="num">W₁</span><span class="den">W₂</span></span> = <span class="frac" aria-label="800 διά 400"><span class="num">800</span><span class="den">400</span></span></div>
+      <p class="prompt">Κάνω τη διαίρεση των δύο αριθμών.</p>
+      <div class="answer"><label for="ans1">K =</label><input id="ans1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="fb1"><span class="unit"></span></div><div class="feedback" id="fb1" aria-live="polite"></div>
+      <details><summary>💡 Βοήθεια στο βήμα 1</summary><div class="tip">Ρωτώ: «Πόσες φορές χωρά το 400 στο 800;» Σκέφτομαι: 400 × □ = 800.</div></details>
+    </section>
+    <section class="step" data-answer="120">
+      <h3>Βήμα 2 · Βρίσκω την τάση δευτερεύοντος U₂</h3>
+      <p>Ξεκινώ από τη σχέση μεταφοράς τάσεων.</p>
+      <div class="formula">K = <span class="frac"><span class="num">U₁</span><span class="den">U₂</span></span> &nbsp; ⟹ &nbsp; U₂ = <span class="frac"><span class="num">U₁</span><span class="den">K</span></span></div>
+      <div class="formula">U₂ = <span class="frac"><span class="num">240</span><span class="den">2</span></span></div>
+      <p class="prompt">Η τάση U₂ είναι ο άγνωστος παρονομαστής. Για να τη βρω, διαιρώ 240 με 2.</p>
+      <div class="answer"><label for="ans2">U₂ =</label><input id="ans2" type="text" inputmode="decimal" autocomplete="off" aria-describedby="fb2"><span class="unit">V</span></div><div class="feedback" id="fb2" aria-live="polite"></div>
+      <details><summary>💡 Βοήθεια στο βήμα 2</summary><div class="tip">Προκύπτει από την εξίσωση 2 × U₂ = 240. Άρα διαιρώ και τα δύο μέλη με 2.</div></details>
+    </section>
+    <section class="step" data-answer="4">
+      <h3>Βήμα 3 · Βρίσκω την ένταση δευτερεύοντος I₂</h3>
+      <p>Η αντίσταση είναι συνδεδεμένη στο δευτερεύον. Εφαρμόζω τον νόμο του Ohm.</p>
+      <div class="formula">I₂ = <span class="frac"><span class="num">U₂</span><span class="den">R</span></span> = <span class="frac"><span class="num">120</span><span class="den">30</span></span></div>
+      <p class="prompt">Διαιρώ την τάση του δευτερεύοντος με την αντίσταση.</p>
+      <div class="answer"><label for="ans3">I₂ =</label><input id="ans3" type="text" inputmode="decimal" autocomplete="off" aria-describedby="fb3"><span class="unit">A</span></div><div class="feedback" id="fb3" aria-live="polite"></div>
+      <details><summary>💡 Βοήθεια στο βήμα 3</summary><div class="tip">Πόσες φορές χωρά το 30 στο 120; Σκέφτομαι: 30 × □ = 120.</div></details>
+    </section>
+    <section class="step" data-answer="2">
+      <h3>Βήμα 4 · Βρίσκω την ένταση πρωτεύοντος I₁</h3>
+      <p>Χρησιμοποιώ τη σχέση μεταφοράς των εντάσεων. <strong>Προσοχή:</strong> το I₂ είναι επάνω στο κλάσμα.</p>
+      <div class="formula">K = <span class="frac"><span class="num">I₂</span><span class="den">I₁</span></span> &nbsp; ⟹ &nbsp; I₁ = <span class="frac"><span class="num">I₂</span><span class="den">K</span></span></div>
+      <div class="formula">I₁ = <span class="frac"><span class="num">4</span><span class="den">2</span></span></div>
+      <p class="prompt">Διαιρώ το ρεύμα δευτερεύοντος με το Κ.</p>
+      <div class="answer"><label for="ans4">I₁ =</label><input id="ans4" type="text" inputmode="decimal" autocomplete="off" aria-describedby="fb4"><span class="unit">A</span></div><div class="feedback" id="fb4" aria-live="polite"></div>
+      <details><summary>💡 Βοήθεια στο βήμα 4</summary><div class="tip">Ξεκινώ από 2 × I₁ = 4 και διαιρώ με 2, ώστε να μείνει μόνο το I₁.</div></details>
+    </section>
+    <section class="step" data-answer="480">
+      <h3>Βήμα 5 · Βρίσκω τη φαινόμενη ισχύ S₂</h3>
+      <p>Πολλαπλασιάζω τάση δευτερεύοντος επί ένταση δευτερεύοντος.</p>
+      <div class="formula">S₂ = U₂ · I₂ = 120 · 4</div>
+      <p class="prompt">Η μονάδα της φαινόμενης ισχύος είναι το <strong>VA</strong> (βολταμπέρ).</p>
+      <div class="answer"><label for="ans5">S₂ =</label><input id="ans5" type="text" inputmode="decimal" autocomplete="off" aria-describedby="fb5"><span class="unit">VA</span></div><div class="feedback" id="fb5" aria-live="polite"></div>
+      <details><summary>💡 Βοήθεια στο βήμα 5</summary><div class="tip">Μπορώ να κάνω 12 × 4 = 48 και να προσθέσω ένα μηδενικό.</div></details>
+    </section>
+    <section class="step" data-answer="480">
+      <h3>Βήμα 6 · Βρίσκω την πραγματική ισχύ P₂</h3>
+      <p>Για την πραγματική ισχύ χρησιμοποιώ τον τύπο με το <strong>συνφ</strong>.</p>
+      <div class="formula small">P₂ = U₂ · I₂ · συνφ</div>
+      <div class="formula">P₂ = 120 · 4 · <strong>1</strong></div>
+      <p class="prompt">Επειδή το φορτίο είναι καθαρά ωμικό, <strong>συνφ = 1</strong>. Η μονάδα της πραγματικής ισχύος είναι το <strong>W</strong>.</p>
+      <div class="answer"><label for="ans6">P₂ =</label><input id="ans6" type="text" inputmode="decimal" autocomplete="off" aria-describedby="fb6"><span class="unit">W</span></div><div class="feedback" id="fb6" aria-live="polite"></div>
+      <details><summary>💡 Βοήθεια στο βήμα 6</summary><div class="tip">Ο πολλαπλασιασμός με το 1 δεν αλλάζει το αποτέλεσμα: 120 · 4 · 1 = 120 · 4.</div></details>
+    </section>
+    <section class="step" data-answer="0">
+      <h3>Βήμα 7 · Βρίσκω την άεργο ισχύ Q₂</h3>
+      <p>Για την άεργο ισχύ χρησιμοποιώ τον τύπο με το <strong>ημφ</strong>.</p>
+      <div class="formula small">Q₂ = U₂ · I₂ · ημφ</div>
+      <div class="formula">Q₂ = 120 · 4 · <strong>0</strong></div>
+      <p class="prompt">Επειδή το φορτίο είναι καθαρά ωμικό, <strong>ημφ = 0</strong>. Η μονάδα της άεργου ισχύος είναι το <strong>var</strong>.</p>
+      <div class="answer"><label for="ans7">Q₂ =</label><input id="ans7" type="text" inputmode="decimal" autocomplete="off" aria-describedby="fb7"><span class="unit">var</span></div><div class="feedback" id="fb7" aria-live="polite"></div>
+      <details><summary>💡 Βοήθεια στο βήμα 7</summary><div class="tip">Κάθε αριθμός που πολλαπλασιάζεται με το μηδέν δίνει μηδέν.</div></details>
+    </section>
+  </div>
+  <section class="sheet">
+    <h2>Έλεγχος της εργασίας μου</h2>
+    <p>Έλεγξε τις επτά απαντήσεις. Αν κάποια είναι λανθασμένη, διάβασε τη βοήθεια και προσπάθησε ξανά.</p>
+    <div class="controls"><button type="button" id="check">✓ Έλεγχος απαντήσεων</button><button type="button" class="secondary" id="reset">↺ Νέα προσπάθεια</button><button type="button" class="secondary" id="print">⎙ Εκτύπωση φύλλου</button></div>
+    <div class="result hidden" id="score" role="status" aria-live="polite"></div>
+    <div class="note"><strong>Τι κρατώ:</strong> Σε καθαρά ωμικό φορτίο η πραγματική και η φαινόμενη ισχύς έχουν την ίδια <em>αριθμητική</em> τιμή (διαφορετικές μονάδες), ενώ η άεργος ισχύς είναι μηδέν.</div>
+  </section>
+  <p class="mini">Το αρχείο λειτουργεί αυτόνομα στον υπολογιστή ή στον φυλλομετρητή και δεν αποστέλλει τις απαντήσεις στο διαδίκτυο.</p>
+</main>
+<script>
+(function(){
+  'use strict';
+  var steps=Array.from(document.querySelectorAll('#tasks .step'));
+  var score=document.getElementById('score');
+  function numeric(text){
+    var value=String(text).trim().replace(/\s/g,'').replace(',','.');
+    if(!/^-?\d+(?:\.\d+)?$/.test(value)) return null;
+    return Number(value);
+  }
+  function check(){
+    var correct=0;
+    steps.forEach(function(step,index){
+      var input=step.querySelector('input');
+      var feedback=step.querySelector('.feedback');
+      var value=numeric(input.value);
+      var expected=Number(step.dataset.answer);
+      var ok=value!==null&&value===expected;
+      input.classList.remove('ok','no');feedback.classList.remove('good','bad');
+      if(ok){correct++;input.classList.add('ok');feedback.classList.add('good');feedback.textContent='Σωστά! Προχώρησε στο επόμενο βήμα.';}
+      else if(value===null){input.classList.add('no');feedback.classList.add('bad');feedback.textContent='Συμπλήρωσε έναν αριθμό και δοκίμασε ξανά.';}
+      else{input.classList.add('no');feedback.classList.add('bad');feedback.textContent='Δοκίμασε ξανά. Μπορείς να ανοίξεις τη βοήθεια.';}
+    });
+    score.classList.remove('hidden');score.textContent='Σωστές απαντήσεις: '+correct+' από '+steps.length+'. '+(correct===steps.length?'Μπράβο! Ολοκλήρωσες όλα τα βήματα.':'Ξαναδές τα βήματα που χρειάζονται διόρθωση.');
+  }
+  document.getElementById('check').addEventListener('click',check);
+  document.getElementById('reset').addEventListener('click',function(){
+    steps.forEach(function(step){var input=step.querySelector('input');var feedback=step.querySelector('.feedback');input.value='';input.classList.remove('ok','no');feedback.textContent='';feedback.classList.remove('good','bad');step.querySelector('details').open=false;});score.classList.add('hidden');score.textContent='';document.getElementById('ans1').focus();
+  });
+  document.getElementById('print').addEventListener('click',function(){window.print()});
+  steps.forEach(function(step){step.querySelector('input').addEventListener('input',function(){var input=step.querySelector('input');var feedback=step.querySelector('.feedback');input.classList.remove('ok','no');feedback.textContent='';feedback.classList.remove('good','bad');score.classList.add('hidden')});});
+})();
+</script>
+</body>
+</html>
